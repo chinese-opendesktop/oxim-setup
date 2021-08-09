@@ -1,0 +1,47 @@
+# Gambas Form File 2.0
+
+{ Form Form
+  MoveScaled(0,0,47,22)
+  Text = ("X Input Method Global Settings")
+  Border = Window.Fixed
+  { Label1 Label
+    MoveScaled(8,3,8,3)
+    Text = ("IM:")
+  }
+  { Label2 Label
+    MoveScaled(10,7,8,3)
+    Text = ("Alias:")
+  }
+  { USE_KEY_CHECKBOX CheckBox
+    MoveScaled(5,11,27,3)
+    Text = ("HotKey Ctrl + Alt +")
+  }
+  { KEY_SELECT ComboBox
+    MoveScaled(32,11,10,3)
+    Text = ("")
+    ReadOnly = True
+  }
+  { Button1 Button
+    MoveScaled(27,17,8,3)
+    Text = ("OK")
+  }
+  { Button2 Button
+    MoveScaled(37,17,8,3)
+    Text = ("Cancel")
+  }
+  { ALIAS_NAME TextBox
+    MoveScaled(16,7,24,3)
+    Text = ("")
+  }
+  { METHOD_INPUT Label
+    MoveScaled(16,3,11,3)
+    Expand = True
+    Ignore = True
+    Text = ("")
+  }
+  { method_english Label
+    MoveScaled(32,2,24,3)
+    Visible = False
+    Text = ("")
+  }
+}

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>installDialog</class>
+ <widget class="QDialog" name="installDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>557</width>
+    <height>382</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>安裝輸入法</string>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>20</y>
+     <width>81</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>20</y>
+     <width>381</width>
+     <height>301</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>從本機安裝(L)</string>
+    </attribute>
+    <widget class="QLineEdit" name="FileName">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>110</y>
+       <width>321</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="BrowserButton">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>160</y>
+       <width>85</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>瀏覽</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>331</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>請輸入檔案完整路徑名稱,或按一下「瀏覽」,
+按鈕選擇 ; 如果是*.cin檔案的話,請確定該檔
+是UTF-8編碼.</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>從網路安裝(N)</string>
+    </attribute>
+    <widget class="QPushButton" name="connectButton">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>220</y>
+       <width>85</width>
+       <height>34</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>連線</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>../../src/oxim-setup-qt3/images/connect.png</normalon>
+      </iconset>
+     </property>
+    </widget>
+    <widget class="QTreeView" name="IMnettreeView">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>10</y>
+       <width>341</width>
+       <height>201</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>180</y>
+     <width>90</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>下載</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>installDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>440</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>installDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>440</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>BrowserButton</sender>
+   <signal>clicked()</signal>
+   <receiver>installDialog</receiver>
+   <slot>Browser_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>348</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>466</x>
+     <y>331</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>connectButton</sender>
+   <signal>clicked()</signal>
+   <receiver>installDialog</receiver>
+   <slot>Connect_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>355</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>396</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>installDialog</receiver>
+   <slot>download()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>474</x>
+     <y>184</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>489</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>IMnettreeView</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>installDialog</receiver>
+   <slot>returnIMname(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>75</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>384</x>
+     <y>10</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>IMnettreeView</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>installDialog</receiver>
+   <slot>connecturl(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>120</x>
+     <y>188</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>22</x>
+     <y>206</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>Browser_clicked()</slot>
+  <slot>Connect_clicked()</slot>
+  <slot>download()</slot>
+  <slot>returnIMname(QModelIndex)</slot>
+  <slot>connecturl(QModelIndex)</slot>
+ </slots>
+</ui>

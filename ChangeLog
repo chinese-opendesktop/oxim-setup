@@ -1,0 +1,120 @@
+2009-05-06 Wind <yc.yan@ossii.com.tw>
+	* po/zh_CN.po po/zh_HK.po po/zh_TW.po :
+	   內容修正。
+
+	* src/oxim-setup-gambas/* src/oxim-setup-gtk-1.1.7/*
+	  src/oxim-setup-php-0.1.0/src/*
+	  src/oxim-setup-qt3/* :
+	  各setup程式問題修正。
+
+2009-03-27 Wind <yc.yan@ossii.com.tw>
+	1.修正Makefile.*，使 make install-strip 能正常執行。
+	2.配合版本編號會變動，將某些檔案改以 *.in 的方式直接由 configure 代入。
+
+	* Makefile.am oxim-setup.desktop po/zh_CN.po po/zh_HK.po po/zh_TW.po :
+	  內容修正。
+
+	* configure.ac :
+	  移除檢查 libgnomeprint。
+	  內容修正。
+
+        * src/oxim-setup-gambas/* src/oxim-setup-gtk-1.1.7/*
+	  src/oxim-setup-php-0.1.0/src/*
+	  src/oxim-setup-qt3/* :
+	  各setup程式問題修正。
+
+        釋出 1.2.2
+
+2008-12-30 Wind <yc.yan@ossii.com.tw>
+	* configure.ac :
+	  增加檢查liboxim。
+
+	* src/oxim-setup-gambas/* :
+	  setup程式內容相關修正。
+
+	釋出 1.2.1
+
+2008-12-24 Wind <yc.yan@ossii.com.tw>
+	* src/* :
+	  setup程式內容相關修正。
+ 
+2008-12-16 Wind <yc.yan@ossii.com.tw>
+	* autogen.sh :
+	  移除不必要的刪除指令。
+	  某些版本的autoconfig會額外檢查config.rpath有否存在，因此在此以touch指令產生之。
+
+	* configure.ac :
+	  修正檢查libglade時出現的邏輯問題。
+	  修正檢查libgnomeprint時，提示訊息不正確的問題。
+
+	* src/oxim-setup-gambas/* src/oxim-setup-gtk-1.1.7/* :
+	  setup程式相關修正。
+
+	* src/utils/oxim-setup :
+	  程式修正。
+
+2008-12-02 Wind <yc.yan@ossii.com.tw>
+	* Makefile.am :
+	  把oxim-setup.1.gz 更名為oxim-setup.1，因為包RPM時不需包成.gz。
+
+	* configure.ac :
+	  新增libgnomeprint檢查。
+	  還原--enable-setup-gtk設定。
+
+	* oxim-setup.desktop :
+	  修正登入gnome後程式未出現於主選單的問題。
+	  新增Name[zh_HK]。
+
+	* po/LINGUAS
+	  po/zh_CN.po po/zh_TW.po po/zh_HK.po :
+	  針對多國語系I18N的內容變更。
+	  新增zh_HK語系。
+
+	* src/oxim-setup-gambas/* src/oxim-setup-gtk-1.1.7/* src/oxim-setup-php-0.1.0/src/*
+	  src/oxim-setup-qt3/* :
+	  各setup程式問題修正。
+
+	* src/utils/oxim-setup :
+	  支援多語系相關修改。
+	  內容修正。
+
+2008-11-12 Wind <yc.yan@ossii.com.tw>
+	* src/oxim-setup.php src/lib/tab_reader.php :
+	  支援多語系相關修改。
+
+2008-11-10 Wind <yc.yan@ossii.com.tw>
+	* src/oxim-setup-gambas/*
+	  src/oxim-setup-qt3/Makefile.qt src/oxim-setup-qt3/common.h :
+	  setup程式相關修正：
+	  gambas:
+	     1.畫面首頁中，預設值按鈕中，鉤鉤icon與預設值的有少許重疊到
+	     2.片語設定中，對Cell作Edit的動作時，會有'确定'的字樣，但'确'這個字是簡體字
+	     3.字型設定中「右下角的的那些圖片，其底色與程式視窗所用的底色不一樣(在我的theme下是不一樣的)」
+	     4.視窗左上角的icon，是一個'輸'字，感覺不太吉利。
+	  qt3:
+	     1.將i18n定義置於common.h中。
+
+2008-11-07 Wind <yc.yan@ossii.com.tw>
+	* src/oxim-setup-qt3/installim.ui.h :
+	  修正
+	  下載輸入法畫面：
+	  連線某個站台發生連線失敗時，
+	  不會自動跳到輸入法表格檔下載畫面。
+
+2008-11-06 Wind <yc.yan@ossii.com.tw>
+
+	* src/oxim-setup-php-0.1.0/src/lib/tab_reader.php :
+	  修正PHP 5.2.0之前的版本其pathinfo指令缺少『filename』的問題。
+
+2008-11-04 Wind <yc.yan@ossii.com.tw>
+
+	將本專案納入CVS。
+	配合oxim，一併將版本提昇至1.2.0。
+
+2008-09-09 Wind <yc.yan@ossii.com.tw>
+
+	OXIM setup tool (QT3、PHP-GTK、GTK、Gambas)正式釋出。
+	Firefly - QT3
+	Wind - PHP-GTK
+	milochen - GTK
+	Feather-MounTain - Gambas

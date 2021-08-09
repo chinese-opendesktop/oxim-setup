@@ -1,0 +1,87 @@
+' Gambas module file
+PUBLIC SUB Download(URL AS String, tURL AS String)        
+  SHELL "wget " & URL & " -t 3 -O " & tURL WAIT  
+END
+
+PUBLIC SUB Download_old(URL AS String, tURL AS String)        
+  DIM tmp_array AS Array
+  DIM tmp AS String
+  DIM f AS File  
+  DIM buffer AS String
+  DIM retrytimes AS Integer
+  DIM a AS FtpClient  
+  DIM i AS Integer
+  DIM method AS Object
+  
+  buffer = ""
+  retrytimes = 0
+  '判斷是啥服務
+  tmp_array = Split(URL, ":")
+  IF tmp_array.Length > 1 THEN 
+    SELECT CASE LCase(tmp_array[0])
+        CASE "http"            
+            method = NEW HttpClient 
+            method.URL = URL
+            method.TimeOut = 30
+            method.GET() 
+            
+            DO WHILE method.Status <> 0
+              WAIT 0.01  
+            LOOP            
+            IF method.Status < 0 THEN
+              PRINT "ERROR"
+            ELSE
+              ' Success - read the data
+              IF Lof(method) THEN READ #method, buffer, Lof(method)
+                  'Message(buffer)
+                  '將buffer寫入到檔案
+                  File.Save(tURL, buffer)        
+            END IF  
+
+        CASE "ftp"
+            method = NEW FtpClient
+            method.TimeOut = 30
+            method.User = "anonymous"
+            method.Password = "q@"                        
+            
+            method.URL = URL            
+            method.GET(tURL) 
+            'message(URL)
+            
+            
+            
+'            method.passive
+            'retrytimes = 0
+            'FOR i = 0 TO 30
+              'DO WHILE Downloader.method.Status <> 0
+              'WAIT 1
+                'PRINT Downloader.method.status
+                'retrytimes += 1
+                'IF retrytimes > 5 THEN      
+                    'Downloader.method = NULL         
+                    'BREAK  
+                'ENDIF 
+'                IF method.Status = 0 THEN 
+'                    BREAK 
+
+                'ELSE 
+             '       WAIT 0.1     
+                    'PRINT "nothing"
+                                   
+                'ENDIF 
+            'NEXT 
+            
+             
+    END SELECT 
+    
+  
+ELSE 
+  'Message("你這引入的網址錯誤!")
+ENDIF             
+
+
+
+  
+    
+ 
+END

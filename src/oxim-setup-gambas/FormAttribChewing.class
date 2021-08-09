@@ -1,0 +1,89 @@
+' Gambas class file
+
+
+PUBLIC SUB Button2_Click()
+
+  FormAttribChewing.Visible = FALSE
+
+END
+
+PUBLIC SUB Button1_Click()
+    DIM KeySet_Value AS String
+    DIM SelectionKeys_Value AS String
+    DIM CapsLockMode_Value AS String
+    
+    IF KeySet_0.value = TRUE THEN KeySet_Value = 0
+    IF KeySet_1.value = TRUE THEN KeySet_Value = 1
+    IF KeySet_2.value = TRUE THEN KeySet_Value = 2
+    IF KeySet_3.value = TRUE THEN KeySet_Value = 3
+    IF KeySet_4.value = TRUE THEN KeySet_Value = 4
+    IF KeySet_5.value = TRUE THEN KeySet_Value = 5
+    IF KeySet_6.value = TRUE THEN KeySet_Value = 6
+    IF KeySet_7.value = TRUE THEN KeySet_Value = 7
+    IF KeySet_8.value = TRUE THEN KeySet_Value = 8
+    
+    IF SelectionKey_0.value = TRUE THEN SelectionKeys_Value = 0
+    IF SelectionKey_1.value = TRUE THEN SelectionKeys_Value = 1
+    IF SelectionKey_2.value = TRUE THEN SelectionKeys_Value = 2
+    
+    IF CapsLock_0.Value = TRUE THEN CapsLockMode_Value = 0
+    IF CapsLock_1.Value = TRUE THEN CapsLockMode_Value = 1
+    
+    FormAttribChewing.Visible = FALSE
+    FMain.CHEWING_SETTING(KeySet_Value, SelectionKeys_Value, CapsLockMode_Value)
+    
+END
+
+PUBLIC SUB Form_Open()
+    '#KeyMap = 鍵盤對應(0:標準, 1:許氏, 2:IBM, 3:精業, 4:倚天, 5:倚天26鍵, 6:DVORAK, 7:DVORAK 許氏, 8:漢語拼音)
+    '#SelectionKeys = 選字鍵(0:1234567890, 1:qwertyuiop, 2:asdfghjkl; 3:zxcvbnm,./)
+    
+    ME.Center
+    
+END
+PUBLIC SUB sets(KeyMap AS String, SelectionKeys AS String, CapsLockMode AS String)
+'Message(keymap)
+'Message(SelectionKeys)
+'Message(capslockmode)
+
+    SELECT CASE KeyMap
+        CASE "0"
+            KeySet_0.Value = TRUE
+        CASE "1"
+            KeySet_1.Value = TRUE
+        CASE "2"
+            KeySet_2.Value = TRUE
+        CASE "3"
+            KeySet_3.Value = TRUE                        
+        CASE "4"
+            KeySet_4.Value = TRUE
+        CASE "5"
+            KeySet_5.Value = TRUE
+        CASE "6"
+            KeySet_6.Value = TRUE            
+        CASE "7"
+            KeySet_7.Value = TRUE
+        CASE "8"
+            KeySet_8.Value = TRUE
+    END SELECT 
+    
+    SELECT CASE SelectionKeys
+        CASE "0"
+            SelectionKey_0.Value = TRUE
+        CASE "1"
+            SelectionKey_1.Value = TRUE
+        CASE "2"
+            SelectionKey_2.Value = TRUE
+        CASE "3"
+            SelectionKey_3.Value = TRUE                        
+    END SELECT 
+    
+    SELECT CASE CapsLockMode
+        CASE "0"
+            CapsLock_0.Value = TRUE
+        CASE "1"
+            CapsLock_1.Value = TRUE
+    END SELECT     
+  
+END
+

@@ -1,0 +1,22 @@
+
+JAVA = /usr/bin/java
+JAR =/usr/bin/jar
+JC = /usr/bin/javac
+RM = rm
+SRC = src
+bin_PROGRAMS = oxim-setup-java
+
+FILENAME = setup.java
+
+
+all:
+	cd ./$(SRC)/$(bin_PROGRAMS)/$(SRC); \
+	$(JC) -encoding utf-8 $(FILENAME)
+	cd ./$(SRC)/$(bin_PROGRAMS)/$(SRC); \
+	$(JAR) cvfm oxim-setup.jar manifest.mf setup.class *.class *.png
+	$(RM) -rf ./$(SRC)/$(bin_PROGRAMS)/$(SRC)/*.class 
+	$(RM) -rf ./$(SRC)/$(bin_PROGRAMS)/$(SRC)/*.png
+	$(RM) -rf ./$(SRC)/$(bin_PROGRAMS)/$(SRC)/*.form
+	$(RM) -rf ./$(SRC)/$(bin_PROGRAMS)/$(SRC)/*.java 
+	$(RM) -rf ./$(SRC)/$(bin_PROGRAMS)/$(SRC)/*.mf
+

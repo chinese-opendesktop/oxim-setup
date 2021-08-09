@@ -1,0 +1,519 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: oxim-setup 1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-09-23 14:07+0800\n"
+"PO-Revision-Date: 2008-09-23 14:08+0800\n"
+"Last-Translator: wind <yc.yan@ossii.com.tw>>\n"
+"Language-Team: ossii <ossii@ossii.org.tw>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/oxim-setup-qt3/chewing.ui.h:16
+msgid "The Chewing Input Method Property"
+msgstr "新酷音輸入法屬性"
+
+#: src/oxim-setup-qt3/chewing.ui.h:18
+msgid "Keybord's keymapping"
+msgstr "鍵盤對應"
+
+#: src/oxim-setup-qt3/chewing.ui.h:19
+msgid "Standard"
+msgstr "標準注音鍵盤"
+
+#: src/oxim-setup-qt3/chewing.ui.h:20
+msgid "Shius'"
+msgstr "許氏"
+
+#: src/oxim-setup-qt3/chewing.ui.h:21
+msgid "IBM"
+msgstr "IBM"
+
+#: src/oxim-setup-qt3/chewing.ui.h:22
+msgid "Ginya"
+msgstr "精業"
+
+#: src/oxim-setup-qt3/chewing.ui.h:23
+msgid "Eten"
+msgstr "倚天鍵盤"
+
+#: src/oxim-setup-qt3/chewing.ui.h:24
+msgid "Eten 26 key"
+msgstr "倚天 26 鍵"
+
+#: src/oxim-setup-qt3/chewing.ui.h:25
+msgid "DVORAK"
+msgstr "DVORAK"
+
+#: src/oxim-setup-qt3/chewing.ui.h:26
+msgid "DVORAK Shius'"
+msgstr "DVORAK 許氏"
+
+#: src/oxim-setup-qt3/chewing.ui.h:27
+msgid "Pingin"
+msgstr "漢語拼音"
+
+#: src/oxim-setup-qt3/chewing.ui.h:29
+msgid "SelectionKeys"
+msgstr "選字鍵"
+
+#: src/oxim-setup-qt3/chewing.ui.h:30
+msgid "1234567890 KeSel"
+msgstr "1234567890 選字"
+
+#: src/oxim-setup-qt3/chewing.ui.h:31
+msgid "qwertyuiop KeSel"
+msgstr "qwertyuiop 選字"
+
+#: src/oxim-setup-qt3/chewing.ui.h:32
+msgid "asdfghjkl; KeSel"
+msgstr "asdfghjkl; 選字"
+
+#: src/oxim-setup-qt3/chewing.ui.h:33
+msgid "zxcvbnm,./ KeSel"
+msgstr "zxcvbnm,./ 選字"
+
+#: src/oxim-setup-qt3/chewing.ui.h:35
+msgid "CapsLock Output"
+msgstr "CapsLock 輸出"
+
+#: src/oxim-setup-qt3/chewing.ui.h:36
+msgid "Lower"
+msgstr "小寫"
+
+#: src/oxim-setup-qt3/chewing.ui.h:37
+msgid "Upper"
+msgstr "大寫"
+
+#: src/oxim-setup-qt3/chewing.ui.h:39 src/oxim-setup-qt3/gencin.ui.h:109
+#: src/oxim-setup-qt3/installim.ui.h:49 src/oxim-setup-qt3/oxim-setup.ui.h:918
+msgid "_OK"
+msgstr "確定(_O)"
+
+#: src/oxim-setup-qt3/chewing.ui.h:40 src/oxim-setup-qt3/gencin.ui.h:110
+#: src/oxim-setup-qt3/installim.ui.h:50 src/oxim-setup-qt3/oxim-setup.ui.h:919
+msgid "_Cancel"
+msgstr "取消(_C)"
+
+#: src/oxim-setup-qt3/gencin.ui.h:92
+msgid "Input Method Property Settings"
+msgstr "輸入法屬性設定"
+
+#: src/oxim-setup-qt3/gencin.ui.h:94 src/oxim-setup-qt3/globolsetting.ui.h:24
+msgid "IM:"
+msgstr "輸入法："
+
+#: src/oxim-setup-qt3/gencin.ui.h:95
+msgid "Auto show word-combined rst."
+msgstr "打字時，自動顯示組字結果。"
+
+#: src/oxim-setup-qt3/gencin.ui.h:96
+msgid "Enable '*','?' wild case word f."
+msgstr "啟用 '*'、'?' 萬用組字功能。"
+
+#: src/oxim-setup-qt3/gencin.ui.h:97
+msgid "Press space key to reset."
+msgstr "錯誤時，按空白鍵自動清除。"
+
+#: src/oxim-setup-qt3/gencin.ui.h:98
+msgid "Auto show char mode"
+msgstr "自動出字模式"
+
+#: src/oxim-setup-qt3/gencin.ui.h:99
+msgid "Auto out wrd"
+msgstr "滿字根自動出字"
+
+#: src/oxim-setup-qt3/gencin.ui.h:100
+msgid "Shift selkey."
+msgstr "選字鍵後移一位"
+
+#: src/oxim-setup-qt3/gencin.ui.h:101
+msgid "Auto output word"
+msgstr "自動出字模式"
+
+#: src/oxim-setup-qt3/gencin.ui.h:102
+msgid "Ignore space"
+msgstr "忽略後續空白"
+
+#: src/oxim-setup-qt3/gencin.ui.h:103
+msgid "Space key valid"
+msgstr "後續空白視為有效"
+
+#: src/oxim-setup-qt3/gencin.ui.h:104
+msgid "end key to out. wrd"
+msgstr "按下結束鍵出字。"
+
+#: src/oxim-setup-qt3/gencin.ui.h:105
+msgid ""
+"If the Input Method defined EndKey(input method like chewing, etc), then "
+"when you press EndKey you choose, OXIM output the word automatic."
+msgstr ""
+"如果該輸入法有定義結束鍵(像是注音一類的輸入法)，則按下指定的結束鍵時，就立刻"
+"出字。"
+
+#: src/oxim-setup-qt3/gencin.ui.h:106
+msgid "Special Chars:"
+msgstr "特殊字根設定："
+
+#: src/oxim-setup-qt3/gencin.ui.h:107
+msgid ""
+"This function just design for array30's special require. Set this to disable "
+"select list when press some special key."
+msgstr ""
+"用來設定在按下某個鍵之後，再按選字鍵時，則此選字鍵便失去了選字功能。此功能是"
+"針對行列 30 輸入法的特殊需求而設計。"
+
+#: src/oxim-setup-qt3/gencin.ui.h:111
+msgid "_Default"
+msgstr "預設值(_D)"
+
+#: src/oxim-setup-qt3/gencin.ui.h:112
+msgid "Default Input Method Setting"
+msgstr "還原輸入法預設值"
+
+#: src/oxim-setup-qt3/globolsetting.ui.h:22
+msgid "X Input Method Global Settings"
+msgstr "輸入法通用設定"
+
+#: src/oxim-setup-qt3/globolsetting.ui.h:25
+msgid "Alias:"
+msgstr "別名："
+
+#: src/oxim-setup-qt3/globolsetting.ui.h:26
+msgid "HotKey Ctrl + Alt +"
+msgstr "使用按鍵組合 Ctrl + Alt +"
+
+#: src/oxim-setup-qt3/globolsetting.ui.h:27
+msgid "OK"
+msgstr "確定"
+
+#: src/oxim-setup-qt3/globolsetting.ui.h:28
+#: src/oxim-setup-qt3/installim.ui.h:307
+msgid "Cancel"
+msgstr "取消"
+
+#: src/oxim-setup-qt3/installim.ui.h:19
+msgid ""
+"Standard Input Method Ref. File (*.cin *.cin.gz *.tab);;SCIM Input Method "
+"Ref. File(*.txt.in)"
+msgstr "標準輸入法參考檔 (*.cin *.cin.gz *.tab);;SCIM 輸入法參考檔(*.txt.in)"
+
+#: src/oxim-setup-qt3/installim.ui.h:21
+msgid "open file dialog"
+msgstr "開啟檔案"
+
+#: src/oxim-setup-qt3/installim.ui.h:22
+msgid "Please choose"
+msgstr "請選擇"
+
+#: src/oxim-setup-qt3/installim.ui.h:43
+msgid "Install Input Method"
+msgstr "安裝輸入法"
+
+#: src/oxim-setup-qt3/installim.ui.h:44
+msgid "Instal_L from local"
+msgstr "從本機安裝(_L)"
+
+#: src/oxim-setup-qt3/installim.ui.h:45
+msgid "Install from _Network"
+msgstr "從網路安裝(_N)"
+
+#: src/oxim-setup-qt3/installim.ui.h:46
+msgid ""
+"Input full file name include file path, or press \"browse\" button to choose "
+"file;"
+msgstr ""
+"請輸入檔案完整路徑名稱，或按一下「瀏覽」按鈕選擇；如果是 *.cin 檔案的話，請確"
+"定該檔是 UTF-8 編碼。"
+
+#: src/oxim-setup-qt3/installim.ui.h:47
+msgid "Browse"
+msgstr "瀏覽"
+
+#: src/oxim-setup-qt3/installim.ui.h:48
+msgid "Connect"
+msgstr "連線"
+
+#: src/oxim-setup-qt3/installim.ui.h:82
+msgid "Error"
+msgstr "錯誤"
+
+#: src/oxim-setup-qt3/installim.ui.h:83 src/oxim-setup-qt3/installim.ui.h:112
+msgid "Download failed: %1."
+msgstr "下載失敗：%1."
+
+#: src/oxim-setup-qt3/installim.ui.h:111
+msgid "HTTP"
+msgstr "HTTP"
+
+#: src/oxim-setup-qt3/installim.ui.h:131
+msgid "Language&Input Method Name"
+msgstr "適用語言與輸入法名稱"
+
+#: src/oxim-setup-qt3/installim.ui.h:132
+msgid "Description"
+msgstr "說明"
+
+#: src/oxim-setup-qt3/installim.ui.h:300
+msgid "Write error : %1."
+msgstr "寫入失敗：%1."
+
+#: src/oxim-setup-qt3/installim.ui.h:306
+msgid "Downloading..."
+msgstr "正在下載檔案..."
+
+#: src/oxim-setup-qt3/installim.ui.h:309
+msgid "download progress dialog"
+msgstr "下載處理對話框"
+
+#: src/oxim-setup-qt3/installim.ui.h:396
+msgid "Select a site to download"
+msgstr "請選擇下載站台"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:180
+#: src/oxim-setup-qt3/oxim-setup.ui.h:328
+msgid "None"
+msgstr "無"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:201
+msgid "Duplicate key"
+msgstr "快速鍵重複"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:202
+msgid "The key you choose had used by other Input-Method!\n"
+msgstr "您指定的快速鍵，已經被其他輸入法使用了！\n"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:203
+msgid "Re-Select another key, please."
+msgstr "請重新指定另一組快速鍵。"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:295
+#msgid "Open X Input Method "
+#msgstr "開啟輸入法"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:337
+msgid "<built-in>"
+msgstr "<內建>"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:732
+#, c-format
+msgid "Convert success\n"
+msgstr "轉檔成功\n"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:736
+#, c-format
+msgid "1.Convert failure\n"
+msgstr "1.輸入法轉檔失敗\n"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:741
+#, c-format
+msgid "2.Convert failure\n"
+msgstr "2.輸入法轉檔失敗\n"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:756
+#, c-format
+msgid "Install success\n"
+msgstr "安裝成功\n"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:760
+#, c-format
+msgid "Install failure\n"
+msgstr "安裝失敗\n"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:765
+#, c-format
+msgid "This kind of tab file can not be support!\n"
+msgstr "不支援此種格式的 tab 檔案！\n"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:769
+#, c-format
+msgid "OXIM don't support this file\n"
+msgstr "不是 OXIM 支援的輸入法檔案\n"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:837
+msgid "Remove Input Method"
+msgstr "移除輸入法"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:838
+msgid "It'll remove the input method you choose from your computer,\n"
+msgstr "這樣會將您選定的輸入法從您的電腦中移除，\n"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:839
+msgid "and cannot use it again, are you sure to do?"
+msgstr "無法再繼續使用，真的要這樣做嗎？"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:840
+msgid "_YRemove"
+msgstr "確定移除(_Y)"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:840
+msgid "_NCancel"
+msgstr "取消(_N)"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:877
+msgid "_Input Method"
+msgstr "輸入法(_I)"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:878
+msgid "_Fonts"
+msgstr "字型(_F)"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:879
+msgid "_Pharse"
+msgstr "片語(_P)"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:880
+msgid "_About"
+msgstr "關於(_A)"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:882
+msgid "Default"
+msgstr "預設"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:883
+msgid "Set as default(Ctrl+Space)"
+msgstr "將選定的輸入法設為系統預設(Ctrl+Space)"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:884
+msgid "Gen. setting"
+msgstr "通用設定"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:885
+msgid "KeyMap and Alias"
+msgstr "設定按鍵組合與輸入法別名"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:886
+msgid "Property"
+msgstr "屬性"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:887
+msgid "More settings"
+msgstr "輸入法的詳細設定"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:888
+msgid "circular"
+msgstr "輪換"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:889
+msgid "Input Method"
+msgstr "輸入法"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:890
+msgid "Hotkey"
+msgstr "快速鍵"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:891
+msgid "=="
+msgstr "=="
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:893
+msgid "Favor font:"
+msgstr "偏好字型 ："
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:894
+msgid "Font Size(Pixels)"
+msgstr "字型大小(Pixels)"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:895
+msgid "asse ar:"
+msgstr "組字區："
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:896
+msgid "sel. ar:"
+msgstr "選字區："
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:897
+msgid "st ar:"
+msgstr "狀態區："
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:898
+msgid "Quick mnu:"
+msgstr "快速選單："
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:899
+msgid "Symbl List:"
+msgstr "符號表："
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:900
+msgid "XCIN Style:"
+msgstr "XCIN 風格："
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:901
+msgid "assem. area"
+msgstr "組字區"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:902
+msgid "select. area"
+msgstr "選字區"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:903
+msgid "Status Menu"
+msgstr "狀態區"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:904
+msgid "Quickly Menu"
+msgstr "快速選單"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:905
+msgid "Symbol List"
+msgstr "符號表"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:906
+msgid "XCIN Style"
+msgstr "XCIN 風格"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:908
+msgid ""
+"You can create pharse, word or symbol at left size of table, and when you "
+"input words, you can choose to press Alt+Shift function key to input more "
+"fast."
+msgstr ""
+"您可以在左方的表格內，建立您經常使用的片語、詞句或是符號，往後在輸入的時候，"
+"就可以搭配 Alt+Shift 按鍵，達到快速輸入的目的。"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:910
+msgid "Author:Firefly <firefly@opendesktop.org.tw>"
+msgstr "作者：Firefly <firefly@opendesktop.org.tw>"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:911
+msgid "Website:http://opendesktop.org.tw"
+msgstr "網址：http://opendesktop.org.tw"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:912
+msgid "Copyright:"
+msgstr "授權宣告："
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:914
+msgid "Install IM"
+msgstr "安裝輸入法"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:915
+msgid "Install from local or network"
+msgstr "從本機或網路安裝新的輸入法"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:916
+msgid "Remove IM"
+msgstr "移除輸入法"
+
+#: src/oxim-setup-qt3/oxim-setup.ui.h:917
+msgid "Remove X Input Method from local"
+msgstr "從本機移除輸入法"
+
+msgid "Open X Input Method Setting"
+msgstr "Open X Input Method 輸入法設定"
+
+msgid "chewing"
+msgstr "新酷音"
+
+msgid "Unicode"
+msgstr "萬國碼"
+
+msgid "Standard Input Method Ref. File (*.cin *.cin.gz *.tab)"
+msgstr "標準輸入法參考檔 (*.cin *.cin.gz *.tab)"
+
+msgid "SCIM Input Method Ref. File(*.txt.in)"
+msgstr "SCIM 輸入法參考檔(*.txt.in)"
+
+msgid "_Connect"
+msgstr "連線(_C)"

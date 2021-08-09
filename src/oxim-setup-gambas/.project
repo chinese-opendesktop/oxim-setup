@@ -1,0 +1,27 @@
+# Gambas Project File 2.0
+# Compiled with Gambas 2.9.0
+Title=oxim-setup-gambas
+Startup=FMain
+Icon=logo/oxim-setup-gambas.png
+Version=1.2.279
+Library=gb.gtk
+Library=gb.form
+Library=gb.compress
+Library=gb.net
+Library=gb.net.curl
+Description=輸入法設定程式
+Authors=Feather Mountain 羽山秋人
+TabSize=4
+Translate=1
+Language=zh_TW
+ControlPublic=1
+ModulePublic=1
+ExecPath=/home/shadow/桌面/oxim-setup-gambas.gambas
+Maintainer=羽山
+Vendor=晟鑫科技
+Address=john@ossii.com.tw
+License=General Public Licence
+Systems=autotools
+Menus=
+Categories=
+Groups=

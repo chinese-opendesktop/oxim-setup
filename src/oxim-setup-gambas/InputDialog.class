@@ -1,0 +1,22 @@
+' Gambas class file
+
+
+PUBLIC SUB Button2_Click()
+
+  ME.Visible = FALSE
+  FMain.tableview2.Enabled = TRUE
+END
+
+PUBLIC SUB Button1_Click()
+
+  FMain.tableview2[TextBox2.Text, 1].Text = Trim(TextBox1.Text)
+  ME.Visible = FALSE
+  FMain.tableview2.Refresh
+  FMain.tableview2.Enabled = TRUE
+END
+
+PUBLIC SUB Form_Open()
+
+  ME.Center()
+  
+END

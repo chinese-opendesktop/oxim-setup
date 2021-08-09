@@ -1,0 +1,1451 @@
+' Gambas class file
+
+
+PUBLIC phr_file AS String
+PUBLIC oxim_conf_file AS String
+PUBLIC DefauleInputMethod AS String '預設
+PUBLIC DefaultFontSize AS String = "16"
+PUBLIC PreeditFontSize AS String = "13"         
+PUBLIC SelectFontSize AS String = "13"
+PUBLIC StatusFontSize AS String = "13"
+PUBLIC MenuFontSize AS String = "13"
+PUBLIC SymbolFontSize AS String = "13"
+PUBLIC XcinFontSize AS String = "13"
+PUBLIC WinBoxColor AS String = "#737173"
+PUBLIC BorderColor AS String = "#eeeee6"
+PUBLIC LightColor AS String = "#ffffff"
+PUBLIC DarkColor AS String = "#b4b29c"
+PUBLIC CursorColor AS String = "#7f0000"
+PUBLIC CursorFontColor AS String = "#ffff00"
+PUBLIC FontColor AS String = "#000000"
+PUBLIC ConvertNameColor AS String = "#7f0000"
+PUBLIC InputNameColor AS String = "#00007f"
+PUBLIC UnderlineColor AS String = "#000000"
+PUBLIC KeystrokeColor AS String = "#0000ff"
+PUBLIC KeystrokeBoxColor AS String = "#ffffff"
+PUBLIC SelectFontColor AS String = "#ffffff"
+PUBLIC SelectBoxColor AS String = "#3179ac"
+PUBLIC MenuBGColor AS String = "#4c59a6"
+PUBLIC MenuFontColor AS String = "#ffffff"
+PUBLIC XcinBorderColor AS String = "#ffffff"
+PUBLIC XcinBGColor AS String = "#0000ff"
+PUBLIC XcinFontColor AS String = "#ffffff"
+PUBLIC XcinStatusFGColor AS String = "#00ffff"
+PUBLIC XcinStatusBGColor AS String = "#000000"
+PUBLIC XcinCursorFGColor AS String = "#ffff00"
+PUBLIC XcinCursorBGColor AS String = "#7f0000"
+PUBLIC XcinUnderlineColor AS String = "#00ffff"
+PUBLIC XcinStyleEnabled AS String = "No"
+PUBLIC OnSpotEnabled AS String = "Yes"
+
+PUBLIC tabpaths AS String[2]
+PUBLIC sopaths AS String
+PUBLIC unneedso AS String[2]
+PUBLIC SUB _new()
+
+END
+PUBLIC FUNCTION tab_process(path_file AS String, mode AS String) AS String
+    DIM hFile AS File
+    DIM i AS Integer    
+    DIM j AS Integer
+    DIM Cp AS NEW Uncompress
+    DIM sLine AS String
+    DIM temps AS String
+    DIM etemps AS Array
+    DIM Duration1 AS Byte[256]
+    DIM checkdots AS Boolean
+    DIM locale_array AS Array
+    DIM locale_left AS String
+    DIM locale_right AS String
+    DIM check_ AS Boolean
+    DIM _locale AS Integer
+    temps = ""
+
+    SELECT CASE mode
+        CASE "checktab"
+            Cp.Type = "zlib"
+            Cp.File(path_file, "/tmp/aaa.gz")      
+            SHELL "chmod 777 /tmp/aaa.gz" WAIT   
+            hFile = OPEN "/tmp/aaa.gz" FOR READ
+            FOR i = 0 TO 5
+                READ #hFile, Duration1[i]
+                temps = temps & Chr(Duration1[i])
+            NEXT
+            IF temps = "gencin" THEN 
+                'SHELL "rm -fr /tmp/aaa.gz" WAIT 
+                RETURN 1
+            ELSE
+                
+                RETURN 0
+            ENDIF          
+        CASE "getename"
+            etemps = Split(path_file, "/")
+            
+            temps = etemps[etemps.Length - 1]
+            temps = Replace(temps, ".tab", "")                        
+            RETURN temps        
+        CASE "getcname"            
+            Cp.Type = "zlib"
+            Cp.File(path_file, "/tmp/aaa.gz")        
+            SHELL "chmod 777 /tmp/aaa.gz" WAIT   
+            hFile = OPEN "/tmp/aaa.gz" FOR READ
+            SEEK #hFile, 20 + 38  ' 原是 20+256+38
+            FOR i = 0 TO 255            
+                READ #hFile, Duration1[i]
+                temps = Trim(temps & Chr(Duration1[i]))
+                
+            NEXT
+            
+            '2008-11-12加工，如果temps內含":"或";" ，如果沒找到，就傳回原本的temps
+            checkdots = FALSE
+            '檢查: ;
+
+            FOR i = 0 TO Len(temps) - 1
+                IF Mid(temps, i + 1, 1) = ":" OR Mid(temps, i + 1, 1) = ";" THEN 
+                    checkdots = TRUE
+                ENDIF 
+            NEXT             
+            
+            IF checkdots = TRUE THEN 
+                '傳回原本的temps，因為不是新版內含:;的                            
+                '有找到:;，比對語區
+
+                locale_array = Split(temps, ";")                
+                FOR i = 0 TO locale_array.Count - 1
+                    IF Split(locale_array[i], ":").Count = 2 THEN 
+                        locale_left = Trim(Split(locale_array[i], ":")[0])
+                        locale_right = Trim(Split(locale_array[i], ":")[1])
+                        IF locale_right = GLOBALS.SYS_LANG THEN                         
+                            temps = locale_left    
+                            
+                            RETURN temps                        
+                            BREAK 
+                        ENDIF                     
+                    ENDIF 
+                NEXT 
+                
+                '都沒找到，再檢查locale的語區是否為 xx_yy 系列，如果是，再用前面的 xx 作一次檢查
+                check_ = FALSE
+                _locale = 0
+                FOR i = 0 TO Len(GLOBALS.SYS_LANG) - 1
+                    IF Mid(GLOBALS.SYS_LANG, i + 1, 1) = "_" THEN 
+                        check_ = TRUE
+                        _locale = i
+                        BREAK 
+                    ENDIF 
+                NEXT                 
+                IF check_ = TRUE THEN                                     
+                    '發現語區中 有 _，只好再作一次了...
+                    locale_array = Split(temps, ";")
+                    
+                    FOR i = 0 TO locale_array.Count - 1
+                        IF Split(locale_array[i], ":").Count = 2 THEN 
+                            locale_left = Split(locale_array[i], ":")[0]
+                            locale_right = Split(locale_array[i], ":")[1]
+
+                            IF Trim(locale_right) = Trim(Mid(GLOBALS.SYS_LANG, 1, _locale)) THEN 
+                                temps = locale_left    
+                            BREAK 
+                            ENDIF                     
+                        ENDIF 
+                    NEXT 
+                ELSE 
+'                    '都沒找到的狀況下，只好回傳ename
+'                    etemps = Split(path_file, "/")
+'            
+'                    temps = etemps[etemps.Length - 1]
+'                    temps = Replace(temps, ".tab", "")   
+                     '2008-11-20修改，都沒找到時，回傳第一筆的資料
+                     locale_array = Split(temps, ":")
+                     temps = locale_array[0]
+                     
+                ENDIF 
+            ELSE 
+                    '2008-11-21 return 1.1.6 old cname Aaaaaaaaaaa!!!
+                     'Cp.Type = "zlib"
+                     'Cp.File(path_file, "/tmp/aaa.gz")        
+                     'SHELL "chmod 777 /tmp/aaa.gz" WAIT   
+                     'hFile = OPEN "/tmp/aaa.gz" FOR READ
+                     IF GLOBALS.SYS_ZH_START = TRUE THEN 
+                        SEEK #hFile, 20 + 38 + 256 ' 原是 20+256+38
+                     ELSE 
+                        SEEK #hFile, 20 + 38 ' 原是 20+38
+                     ENDIF 
+                     
+                     temps = ""                     
+                     FOR i = 0 TO 255                                     
+                         READ #hFile, Duration1[i]
+                         temps = Trim(temps & Chr(Duration1[i]))
+                         
+                     NEXT            
+            ENDIF 
+            RETURN temps            
+    END SELECT 
+    
+
+      
+     
+    
+  
+END
+
+PUBLIC SUB Form_Open()
+
+  DIM for_get_oxim_default_phr_shell AS String = ""
+  DIM for_get_oxim_default_phr_string AS String = ""
+  DIM for_get_oxim_default_phr_array AS Array = NULL
+  DIM oxim_conf_string AS String = ""
+  DIM oxim_conf_array AS Array = NULL
+  DIM oxim_conf_array_temp AS Array = NULL
+  DIM fontName AS String = ""
+  DIM left_right AS Array = NULL
+  DIM lefts AS String = ""
+  DIM rights AS String = ""
+  DIM i, j AS Integer = 0
+  DIM input_method_counter AS Integer = 0
+  DIM for_method_array AS Array = NULL
+  DIM for_method_code_array AS Array = NULL
+  DIM k AS Integer = 0 '輸入法順序  
+  
+  DIM realMethods AS Array = NULL '集中找出現有的tab檔，並分析其是否為真實的tab，並且作成陣列列表,配置於realdata
+  DIM temps AS String = ""
+  DIM fulltemps AS String = ""
+  DIM realM_files_list AS String = ""
+  DIM realM_files_array AS Array = NULL
+  DIM realSo_files_list AS String = ""
+  DIM realSO_files_array AS Array = NULL
+  DIM check AS Boolean
+  DIM x AS String
+  DIM x1 AS String
+  DIM SYS_LANG_CHECK AS Integer
+  DIM arch AS String
+  DIM font_check AS Boolean
+  font_check = FALSE
+  SHELL "uname -i" TO arch
+  arch = Trim(arch)
+  IF arch = "x86_64" THEN 
+    GLOBALS.FOR_32_64 = "/usr/lib64"
+  ELSE 
+    GLOBALS.FOR_32_64 = "/usr/lib"
+  ENDIF 
+  SYS_LANG_CHECK = 0
+  GLOBALS.SYS_LANG = Trim(Application.Env["LANG"])  
+  'GLOBALS.SYS_LANG = Trim(System.Language)
+  GLOBALS.SYS_EXTERNAL_DOWNLOAD_URL = Trim(Application.Env["EXTERNAL_DOWNLOAD_URL"])  
+  IF GLOBALS.SYS_EXTERNAL_DOWNLOAD_URL = "@EXTERNAL_URL@" THEN 
+    GLOBALS.SYS_EXTERNAL_DOWNLOAD_URL = ""
+  ENDIF 
+  'Message(GLOBALS.SYS_EXTERNAL_DOWNLOAD_URL)
+  FOR i = 0 TO Len(GLOBALS.SYS_LANG) - 1 
+    IF Mid(GLOBALS.SYS_LANG, i + 1, 1) = "." THEN
+        SYS_LANG_CHECK = i
+        BREAK 
+    ENDIF 
+  NEXT 
+  GLOBALS.SYS_LANG = Trim(Left(GLOBALS.SYS_LANG, i))
+  '檢查是否為zh開頭
+  IF Len(GLOBALS.SYS_LANG) >= 2 THEN 
+    IF Lower(Mid(GLOBALS.SYS_LANG, 1, 2)) = "zh" THEN 
+        GLOBALS.SYS_ZH_START = TRUE
+    ELSE 
+        GLOBALS.SYS_ZH_START = FALSE
+    ENDIF 
+  ELSE 
+    GLOBALS.SYS_ZH_START = FALSE
+  ENDIF   
+  'Message(GLOBALS.SYS_LANG)
+  'ReNameTexts.rename_FMain() '此方法失敗，改用按鈕
+   renames_Click()
+  '檢查系統是否已經啟動
+  CHECK_RESTART_Click()
+  ME.Center   '畫面置中
+  
+  '輸入法tab檔配置目錄宣告
+  k = 0
+  i = 0
+  j = 0
+  tabpaths[0] = GLOBALS.FOR_32_64 & "/oxim/tables"
+  tabpaths[1] = "~/.oxim/tables"
+  sopaths = GLOBALS.FOR_32_64 & "/oxim/modules"
+  '配置realdata的欄位
+  realdata.Columns.Count = 3
+  CLEAR_TABLES_Click()
+  realdata.Columns[0].Text = "IMNAME"
+  realdata.Columns[1].Text = "IMCNAME"  
+  realdata.Columns[2].Text = "IMPATH"  
+  'Message(tab_process("/usr/lib/oxim/tables/cnscj.tab", "getename"))
+  temps = ""
+  fulltemps = ""
+  FOR i = 0 TO tabpaths.Length - 1    
+    realM_files_list = "" 
+    temps = "ls -l " & tabpaths[i] & "/*.tab|awk '{print $NF}' "    
+    'PRINT temps
+    SHELL temps TO realM_files_list
+    realM_files_array = Split(realM_files_list, Chr(10))
+    
+    FOR j = 0 TO realM_files_array.Length - 1
+      'realM_files_array[j] = tabpaths[i] & "/" & realM_files_array[j]
+      fulltemps = fulltemps & realM_files_array[j]   
+      IF j <> realM_files_array.Length - 1 THEN       
+        fulltemps = fulltemps & Chr(10)
+      ENDIF 
+    NEXT 
+  NEXT
+  'PRINT temps
+  'Message(fulltemps)
+  realM_files_array = Split(fulltemps, Chr(10))
+  'Message(realM_files_array.Length)
+  '判斷這些realM_files_array裡的資料是否都合格，合格者就解晰到realdata
+  k = 0
+      
+  'Message(realM_files_array.Length)
+  FOR i = 0 TO realM_files_array.Length - 1
+    '迴圈開始，開始判斷
+    
+    IF Trim(realM_files_array[i]) <> "" THEN 
+    
+        IF tab_process(realM_files_array[i], "checktab") = 1 THEN '確定是tab檔
+            '檢查輸入法有無已在列表
+            check = FALSE
+            FOR j = 0 TO realdata.Rows.Count - 1
+                IF realdata[j, 0].Text = tab_process(realM_files_array[i], "getename") THEN  '已存在，啥都不作        
+                    check = TRUE
+                ENDIF 
+            NEXT    
+            
+            IF check = FALSE THEN '找不到，可以安心的加入 
+                realdata.Rows.Count = realdata.Rows.Count + 1
+                realdata[k, 0].Text = tab_process(realM_files_array[i], "getename")
+                realdata[k, 1].Text = tab_process(realM_files_array[i], "getcname")
+                realdata[k, 2].Text = realM_files_array[i]
+                k = k + 1
+            ENDIF 
+        ENDIF 
+    ENDIF 
+  NEXT 
+k = 0
+  unneedso[0] = "gen-inp-v1.so"
+  unneedso[1] = "gen-inp.so"
+  '檢查並放入預設內鍵的
+  temps = "ls -l " & sopaths & "/*.so|awk '{print $NF}' "   
+  'temps = ""
+  SHELL temps TO realSo_files_list
+  realSO_files_array = Split(realSo_files_list, Chr(10))
+  FOR i = 0 TO realSO_files_array.Length - 1    
+    IF realSO_files_array[i] <> "" THEN     
+        check = 0
+        FOR j = 0 TO unneedso.Length - 1
+            IF unneedso[j] = Split(realSO_files_array[i], "/")[Split(realSO_files_array[i], "/").Length - 1] THEN 
+                check = 1
+            ENDIF 
+        NEXT 
+        IF check = 0 THEN 
+            realdata.Rows.Count = realdata.Rows.Count + 1            
+            realdata[realdata.Rows.Count - 1, 0].text = Replace(Split(realSO_files_array[i], "/")[Split(realSO_files_array[i], "/").Length - 1], ".so", "")
+            SELECT CASE realdata[realdata.Rows.Count - 1, 0].text
+                CASE "chewing"
+                    realdata[realdata.Rows.Count - 1, 1].text = ("chewing")
+                CASE "unicode"
+                    realdata[realdata.Rows.Count - 1, 1].text = ("Unicode")
+            END SELECT 
+            realdata[realdata.Rows.Count - 1, 2].text = realSO_files_array[i]
+        ENDIF 
+    ENDIF 
+  
+  NEXT 
+
+  
+  'fulldata的設置
+  fulldata.Columns.Count = 18
+  fulldata.Columns[0].Text = "Method_Name"
+  fulldata.Columns[1].Text = "SetKey"
+  fulldata.Columns[2].Text = "AliasName"
+  fulldata.Columns[3].Text = "Circular"
+  fulldata.Columns[4].Text = "AutoCompose"
+  fulldata.Columns[5].Text = "AutoUpChar"
+  fulldata.Columns[6].Text = "AutoFullUp"
+  fulldata.Columns[7].Text = "SpaceAutoUp"
+  fulldata.Columns[8].Text = "SelectKeyShift"
+  fulldata.Columns[9].Text = "SpaceIgnore"
+  fulldata.Columns[10].Text = "SpaceReset"
+  fulldata.Columns[11].Text = "WildEnable"
+  fulldata.Columns[12].Text = "EndKey"
+  fulldata.Columns[13].Text = "DisableSelectList"
+  fulldata.Columns[14].Text = "Method_Chinese_Name" '取得method上二列後的中文
+  fulldata.Columns[15].Text = "KeyMap" '新酷音用的
+  fulldata.Columns[16].Text = "SelectionKeys" '新酷音用的
+  fulldata.Columns[17].Text = "CapsLockMode" '新酷音用的
+  
+
+  
+  
+  '定義來源檔位置
+  phr_file = "~/.oxim/tables/default.phr"
+  oxim_conf_file = "~/.oxim/oxim.conf"
+  
+  
+'讀oxim.conf
+'讀出來的資料，就給他變成array
+
+ SHELL "cat " & oxim_conf_file TO oxim_conf_string
+ '如果是空的，就讀入/etc/oxim/oxim.conf
+ IF Trim(oxim_conf_string) = "" THEN 
+    CHECK_ETC_OXIM_CONF_Click()
+ ENDIF 
+ oxim_conf_array = Split(oxim_conf_string, Chr(10))
+
+  '**************************第二頁，字型 start---
+  Font_choice.Clear()
+  Font_choice.ReadOnly = TRUE
+  ' Fill ReadOnly ComboBox with a list of installed fonts
+  '設定字型 
+  FOR EACH fontName IN Fonts
+    Font_choice.Add(fontName)
+  NEXT
+  
+  FOR i = 0 TO oxim_conf_array.Length - 1 
+   oxim_conf_array_temp = Split(oxim_conf_array[i], "=")
+   FOR j = 0 TO oxim_conf_array_temp.Length - 1
+     oxim_conf_array_temp[j] = Trim(oxim_conf_array_temp[j])
+   NEXT 
+   IF oxim_conf_array_temp.Length > 1 THEN 
+     IF oxim_conf_array_temp[0] = "DefaultFontName" THEN 
+      '檢查看看Font_choice列表有無使用者自訂的
+       font_check = FALSE
+       FOR j = 0 TO Font_choice.Count - 1
+         IF Replace(oxim_conf_array_temp[1], "\"", "") = Font_choice[j].Text THEN 
+           font_check = TRUE
+         ENDIF 
+       NEXT        
+       IF font_check = FALSE THEN 
+        '要增加一個項目為使用者自己定的
+        Font_choice.Add(Replace(oxim_conf_array_temp[1], "\"", ""))
+       ENDIF 
+     Font_choice.text = Replace(oxim_conf_array_temp[1], "\"", "")     
+     ENDIF 
+     IF oxim_conf_array_temp[0] = "DefauleInputMethod" THEN 
+        DefauleInputMethod = Replace(oxim_conf_array_temp[1], "\"", "")     
+     ENDIF 
+     
+     '組字區PreeditFontSize
+     IF oxim_conf_array_temp[0] = "PreeditFontSize" THEN 
+        PreeditFontSize_INPUT.Value = Replace(oxim_conf_array_temp[1], "\"", "")
+     ELSE IF oxim_conf_array_temp[0] = "SelectFontSize" THEN 
+        SelectFontSize_INPUT.Value = Replace(oxim_conf_array_temp[1], "\"", "")
+     ELSE IF oxim_conf_array_temp[0] = "StatusFontSize" THEN 
+        StatusFontSize_INPUT.Value = Replace(oxim_conf_array_temp[1], "\"", "")
+     ELSE IF oxim_conf_array_temp[0] = "MenuFontSize" THEN 
+        MenuFontSize_INPUT.Value = Replace(oxim_conf_array_temp[1], "\"", "")
+     ELSE IF oxim_conf_array_temp[0] = "SymbolFontSize" THEN 
+        SymbolFontSize_INPUT.Value = Replace(oxim_conf_array_temp[1], "\"", "")        
+     ELSE IF oxim_conf_array_temp[0] = "XcinFontSize" THEN 
+        XcinFontSize_INPUT.Value = Replace(oxim_conf_array_temp[1], "\"", "")             
+     ELSE IF oxim_conf_array_temp[0] = "WinBoxColor" THEN
+        WinBoxColor = Replace(oxim_conf_array_temp[1], "\"", "")             
+     ELSE IF oxim_conf_array_temp[0] = "BorderColor" THEN
+        BorderColor = Replace(oxim_conf_array_temp[1], "\"", "")                  
+     ELSE IF oxim_conf_array_temp[0] = "LightColor" THEN
+        LightColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "DarkColor" THEN
+        DarkColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "CursorColor" THEN
+        CursorColor = Replace(oxim_conf_array_temp[1], "\"", "")                      
+     ELSE IF oxim_conf_array_temp[0] = "CursorFontColor" THEN
+        CursorFontColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "FontColor" THEN
+        FontColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "ConvertNameColor" THEN
+        ConvertNameColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "InputNameColor" THEN
+        InputNameColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "UnderlineColor" THEN
+        UnderlineColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "KeystrokeColor" THEN
+        KeystrokeColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "KeystrokeBoxColor" THEN
+        KeystrokeBoxColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "SelectFontColor" THEN
+        SelectFontColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "SelectBoxColor" THEN
+        SelectBoxColor = Replace(oxim_conf_array_temp[1], "\"", "")                                      
+     ELSE IF oxim_conf_array_temp[0] = "MenuBGColor" THEN
+        MenuBGColor = Replace(oxim_conf_array_temp[1], "\"", "")              
+     ELSE IF oxim_conf_array_temp[0] = "MenuFontColor" THEN
+        MenuFontColor = Replace(oxim_conf_array_temp[1], "\"", "")              
+     ELSE IF oxim_conf_array_temp[0] = "XcinBorderColor" THEN
+        XcinBorderColor = Replace(oxim_conf_array_temp[1], "\"", "")              
+     ELSE IF oxim_conf_array_temp[0] = "XcinBGColor" THEN
+        XcinBGColor = Replace(oxim_conf_array_temp[1], "\"", "")              
+     ELSE IF oxim_conf_array_temp[0] = "XcinFontColor" THEN
+        XcinFontColor = Replace(oxim_conf_array_temp[1], "\"", "")              
+     ELSE IF oxim_conf_array_temp[0] = "XcinStatusFGColor" THEN
+        XcinStatusFGColor = Replace(oxim_conf_array_temp[1], "\"", "")       
+     ELSE IF oxim_conf_array_temp[0] = "XcinStatusBGColor" THEN
+        XcinStatusBGColor = Replace(oxim_conf_array_temp[1], "\"", "")       
+     ELSE IF oxim_conf_array_temp[0] = "XcinCursorFGColor" THEN
+        XcinCursorFGColor = Replace(oxim_conf_array_temp[1], "\"", "")       
+     ELSE IF oxim_conf_array_temp[0] = "XcinCursorBGColor" THEN
+        XcinCursorBGColor = Replace(oxim_conf_array_temp[1], "\"", "")                               
+     ELSE IF oxim_conf_array_temp[0] = "XcinUnderlineColor" THEN
+        XcinUnderlineColor = Replace(oxim_conf_array_temp[1], "\"", "")       
+     ELSE IF oxim_conf_array_temp[0] = "XcinStyleEnabled" THEN
+        XcinStyleEnabled = Replace(oxim_conf_array_temp[1], "\"", "")                       
+     ELSE IF oxim_conf_array_temp[0] = "OnSpotEnabled" THEN
+        OnSpotEnabled = Replace(oxim_conf_array_temp[1], "\"", "")                                              
+     ELSE IF oxim_conf_array_temp[0] = "DefaultFontSize" THEN 
+        DefaultFontSize = Replace(oxim_conf_array_temp[1], "\"", "")                                              
+     ENDIF      
+   ENDIF 
+   for_method_array = Split(oxim_conf_array[i], " ")
+   IF for_method_array.Length > 1 THEN 
+    IF for_method_array[0] = "<InputMethod" THEN 
+        fulldata.Rows.Count = fulldata.Rows.Count + 1
+        fulldata[k, 0].Text = Trim(Replace(Replace(for_method_array[1], "\"", ""), ">", ""))
+        '將第二列改成 realdata 的第一列了 11/17
+        'fulldata[k, 14].Text = Split(oxim_conf_array[i - 2], " ")[1]
+        FOR j = 0 TO realdata.Rows.Count - 1
+            IF fulldata[k, 0].text = realdata[j, 0].Text THEN 
+                fulldata[k, 14].Text = Trim(realdata[j, 1].text)
+            ENDIF 
+        NEXT 
+    ENDIF 
+   ENDIF  
+   IF Trim(oxim_conf_array[i]) = "</InputMethod>" THEN 
+        k = k + 1
+   ENDIF 
+   for_method_code_array = Split(oxim_conf_array[i], "=")
+   IF for_method_code_array.Length > 1 THEN     
+    IF Trim(for_method_code_array[0]) = "SetKey" THEN 
+        fulldata[k, 1].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "AliasName" THEN 
+        fulldata[k, 2].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "Circular" THEN 
+        fulldata[k, 3].Text = Trim(Replace(for_method_code_array[1], "\"", ""))        
+    ELSE IF Trim(for_method_code_array[0]) = "AutoCompose" THEN 
+        fulldata[k, 4].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "AutoUpChar" THEN 
+        fulldata[k, 5].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "AutoFullUp" THEN     
+        fulldata[k, 6].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "SpaceAutoUp" THEN     
+        fulldata[k, 7].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "SelectKeyShift" THEN 
+        fulldata[k, 8].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "SpaceIgnore" THEN 
+        fulldata[k, 9].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "SpaceReset" THEN 
+        fulldata[k, 10].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "WildEnable" THEN 
+        fulldata[k, 11].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "EndKey" THEN 
+        fulldata[k, 12].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "DisableSelectList" THEN 
+        fulldata[k, 13].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "KeyMap" THEN 
+        fulldata[k, 15].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "SelectionKeys" THEN 
+        fulldata[k, 16].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "CapsLockMode" THEN 
+        fulldata[k, 17].Text = Trim(Replace(for_method_code_array[1], "\"", ""))        
+    ENDIF  
+   ENDIF 
+ NEXT 
+  '**************************第二頁，字型 end---
+  
+'ListView1.
+
+'GridView1.Columns.Count = 5
+'GridView1.Rows.Count = 5
+'GridView1.Columns[0].Title = "test,abc"
+'GridView1.Columns[0].Text = "test"
+'GridView1[0, 0].Picture["icon:/small/apply"].Image
+'GridView1[0, 0].text = "test"
+''ColumnView1.Add(test, "test")
+''GridView1.Add(0, "test", Picture["icon:/small/apply"])
+'GridView1.Columns[1].Text "b"
+
+'ColumnView1.Add(Picture["icon:/small/apply"].Image, "test")
+
+          'ColumnView1.Columns.Count = 5
+          'ColumnView1.Rows.Count = 5
+'ColumnView1.Columns[0].Text = "test"
+
+
+'*************************片語start---------------------------------------------------------
+for_get_oxim_default_phr_shell = "cat " & phr_file
+
+'讀出來的資料，就給他變成array
+SHELL for_get_oxim_default_phr_shell TO for_get_oxim_default_phr_string
+'檢查，如果空空如也，就去拿/usr/lib/oxim/tables/default.phr
+IF Trim(for_get_oxim_default_phr_string) = "" THEN 
+    SHELL "cat " & GLOBALS.FOR_32_64 & "/oxim/tables/default.phr" TO for_get_oxim_default_phr_string 
+ENDIF 
+for_get_oxim_default_phr_array = Split(for_get_oxim_default_phr_string, Chr(10))
+'Message(for_get_oxim_default_phr_array.Length)
+
+'共二欄
+tableview2.Columns.Count = 2
+'tableview2.Rows.Count = for_get_oxim_default_phr_array.Length
+
+'欄名
+tableview2.Columns.Resizable = TRUE
+tableview2.Columns[1].Text = "Alt + Shift"
+tableview2.Columns[0].Width = 30
+'片語可以編輯
+
+
+'第一欄上色
+FOR i = 0 TO for_get_oxim_default_phr_array.Length - 1
+  IF Trim(for_get_oxim_default_phr_array[i]) <> "" THEN 
+
+    left_right = Split(for_get_oxim_default_phr_array[i], " ")
+    IF left_right.Length = 2 THEN 
+        tableview2.Rows.Count = tableview2.Rows.Count + 1
+        tableview2[i, 0].Background = 3333333
+        Lefts = left_right[0]
+        Rights = left_right[1]
+        tableview2[i, 0].Text = Lefts
+        tableview2[i, 1].Text = Trim(Replace(Rights, "\"", ""))
+    ENDIF 
+  ENDIF 
+NEXT 
+'*************************片語end-----------------------------------------------------------
+'==========================此段是oxim.conf設定檔start===========================
+    
+'==========================此段是oxim.conf設定檔end===========================
+'IconView1.Add(0, "test", Picture["icon:/small/apply"])
+
+
+'------------------------------------------很重要，用tab跟fulldata作比對，必需要 tab 檔有，才能有 fulldata
+'並把缺tab有的oxim.conf沒的，加入到fulldata
+
+FOR i = 0 TO realdata.Rows.Count - 1
+    check = 0
+    FOR j = 0 TO fulldata.Rows.Count - 1
+        IF Lower(realdata[i, 0].Text) = Lower(fulldata[j, 0].Text) THEN 
+            check = 1
+        ENDIF 
+    NEXT 
+    IF check = 0 THEN 
+        '沒找到，所以要加到fulldata
+        '並使用預設值 
+        
+        fulldata.Rows.Count = fulldata.Rows.Count + 1
+        fulldata[fulldata.Rows.Count - 1, 0].Text = realdata[i, 0].Text
+        fulldata[fulldata.Rows.Count - 1, 1].Text = ""
+        fulldata[fulldata.Rows.Count - 1, 2].Text = ""
+        fulldata[fulldata.Rows.Count - 1, 3].Text = "Yes" 'circuler Default to Yes , 11-26
+        fulldata[fulldata.Rows.Count - 1, 4].Text = "Yes"
+        fulldata[fulldata.Rows.Count - 1, 5].Text = "Yes"
+        fulldata[fulldata.Rows.Count - 1, 6].Text = "Yes"
+        fulldata[fulldata.Rows.Count - 1, 7].Text = "Yes"
+        fulldata[fulldata.Rows.Count - 1, 8].Text = "No"
+        fulldata[fulldata.Rows.Count - 1, 9].Text = "No"
+        fulldata[fulldata.Rows.Count - 1, 10].Text = "No"
+        fulldata[fulldata.Rows.Count - 1, 11].Text = "No"
+        fulldata[fulldata.Rows.Count - 1, 12].Text = "No"
+        fulldata[fulldata.Rows.Count - 1, 13].Text = "None"
+        fulldata[fulldata.Rows.Count - 1, 14].Text = realdata[i, 1].Text
+    ENDIF 
+    'fulldata[fulldata.Rows.Count - 1, 14].Text = realdata[i, 1].Text
+NEXT 
+
+FOR i = fulldata.Rows.Count - 1 TO 0 STEP -1
+    check = 0
+    FOR j = 0 TO realdata.Rows.Count - 1    
+      IF Lower(realdata[j, 0].Text) = Lower(fulldata[i, 0].Text) THEN 
+        check = 1
+        'message(Lower(realdata[j, 0].Text) & "=" & Lower(fulldata[i, 0].Text))
+        
+      ENDIF           
+      
+    NEXT 
+    IF check = 0 THEN '沒找到，把fulldata刪了 
+        fulldata.Rows.Remove(i, 1)        
+    ENDIF 
+NEXT 
+
+
+
+
+
+
+
+tableview1_reload()
+END
+
+
+
+
+
+
+PUBLIC SUB Button2_Click()
+ SHELL "rm -fr /tmp/aaa.gz" WAIT 
+ SHELL "rm -fr /tmp/cin.list" WAIT 
+ ME.Close
+ QUIT 
+END
+
+
+
+PUBLIC SUB PictureBox1_MouseDrag()
+
+     IF Mouse.Left THEN
+      Drag.Icon = LAST.Picture
+      LAST.Drag(LAST.Picture.Image)
+
+      
+    ENDIF
+    
+END
+
+
+
+
+
+
+PUBLIC SUB TableView1_Click()
+    IF tableview1.Column = 0 THEN '按第0列才有效
+        'IF tableview1[tableview1.Row, 0].Picture = picture["img/checkbox_false.png"] THEN 
+          IF fulldata[tableview1.row, 3].text = "No" THEN 
+            tableview1[tableview1.Row, 0].Picture = picture["img/checkbox_true.png"]            
+            fulldata[tableview1.Row, 3].text = "Yes"
+            tableview1.Refresh
+        ELSE 
+            tableview1[tableview1.Row, 0].Picture = picture["img/checkbox_false.png"]
+            fulldata[tableview1.Row, 3].text = "No"        
+           tableview1.Refresh
+        ENDIF 
+    ENDIF 
+    '預設的檢﹑查
+    
+    IF fulldata[tableview1.row, 0].text <> DefauleInputMethod THEN 
+        'IF tableview1[TableView1.row, 1].picture <> picture["icon:/small/apply"] THEN 
+            settodefault.Enabled = TRUE
+        ELSE 
+            settodefault.Enabled = FALSE
+        'ENDIF 
+    ENDIF 
+    '如果第五欄不是<內鍵>，移除的按鈕才可以按
+    
+    IF Len(Trim(TableView1[TableView1.Row, 4].Text)) = 0 THEN 
+        DELETE_BUTTON.Enabled = TRUE
+    ELSE
+        DELETE_BUTTON.Enabled = FALSE
+    ENDIF 
+    '通用設定BUTTOM_KEY_SETTING
+    BUTTOM_KEY_SETTING.Enabled = TRUE
+    '屬性設定BUTTOM_ATTRIB
+    '加入判斷，如果是萬國碼，不給設定
+    IF fulldata[tableview1.row, 0].text = "unicode" THEN 
+        BUTTOM_ATTRIB.Enabled = FALSE
+    ELSE     
+        BUTTOM_ATTRIB.Enabled = TRUE
+    ENDIF 
+END
+
+PUBLIC SUB settodefault_Click()
+  DIM i AS Integer
+  DefauleInputMethod = fulldata[tableview1.row, 0].Text
+  '改圖
+  '先清圖
+  
+  FOR i = 0 TO tableview1.Rows.Count - 1 
+    tableview1[i, 1].Clear
+    tableview1.Refresh
+  NEXT 
+  tableview1[tableview1.Row, 1].Picture = picture["icon:/small/apply"]  
+  tableview1.Refresh
+  '按鈕失效
+  settodefault.Enabled = FALSE
+END
+
+PUBLIC SUB Button3_Click()
+  'FormInstallOxim.LOADTODEFAULT()
+  FormInstallOxim.Visible = TRUE    
+
+END
+
+
+
+
+
+PUBLIC SUB BUTTOM_KEY_SETTING_Click()
+FormKeySetting.Visible = TRUE
+FormKeySetting.Show 
+  FormKeySetting.sets(fulldata[TableView1.Row, 0].Text, fulldata[TableView1.Row, 14].Text, fulldata[TableView1.Row, 1].Text, fulldata[tableview1.row, 2].Text)
+  
+END
+
+PUBLIC SUB SETTING_KEY_ALIAS(METHOD_NAME AS String, ALIAS_NAME AS String, KEY_CODE AS String)
+   DIM i AS Integer
+   DIM keys AS String
+   DIM keys_array AS Array
+   DIM check AS Boolean
+   DIM message_tmp AS String
+   message_tmp = ("The key you choose had used by other Input-Method!\n")
+   message_tmp &= ("Re-Select another key, please.")
+   check = FALSE
+   keys = ""
+   FOR i = 0 TO fulldata.Rows.Count - 1
+    IF METHOD_NAME = fulldata[i, 0].Text THEN                      
+        fulldata[i, 2].text = ALIAS_NAME 
+    ENDIF 
+    '收集已定義的key
+    IF Trim(fulldata[i, 1].Text) <> "" THEN 
+      '自己本身不檢查
+      IF Trim(fulldata[i, 0].Text) <> METHOD_NAME THEN 
+         keys = keys & "," & Trim(fulldata[i, 1].Text)
+      ENDIF 
+    ENDIF 
+   NEXT     
+   '要檢查    
+   keys_array = Split(keys, ",")
+   FOR i = 0 TO keys_array.Length - 1
+    IF Trim(keys_array[i]) <> "" THEN 
+            IF keys_array[i] = KEY_CODE 
+                check = TRUE
+            ENDIF 
+    ENDIF 
+   NEXT 
+   IF check = TRUE THEN '已重覆，不寫入 
+    Message(message_tmp)
+   ELSE 
+    FOR i = 0 TO fulldata.Rows.Count - 1
+        IF METHOD_NAME = fulldata[i, 0].Text THEN   
+            fulldata[i, 1].text = KEY_CODE   
+        ENDIF 
+    NEXT 
+   ENDIF 
+   
+   tableview1_reload()
+END
+
+PUBLIC SUB tableview1_reload()
+DIM DefaultInputMethods AS String[4] '預設的輸入法們，目前好像只知道四個  
+DIM i AS Integer
+DIM j AS Integer
+  '三個預設的輸入法
+  '之後要改成從檔案抓so檔...TODO
+      DefaultInputMethods[0] = "cnscj"
+      DefaultInputMethods[1] = "cnsphone"
+      DefaultInputMethods[2] = "chewing"
+      DefaultInputMethods[3] = "unicode"
+        
+
+tableview1.Columns.Count = 5
+tableview1.Rows.Count = fulldata.Rows.Count
+tableview1.Columns[0].Text = ("circular")
+tableview1.Columns[1].Text = " "
+tableview1.Columns[2].Text = ("Input Method")
+tableview1.Columns[3].Text = ("Hotkey")
+tableview1.Columns[4].Text = ("==")
+tableview1.Columns[0].Width = 40
+tableview1.Columns[1].Width = 15
+
+
+FOR i = 0 TO fulldata.Rows.Count - 1
+    '畫出第一欄
+    IF fulldata[i, 3].text = "Yes" THEN 
+        tableview1[i, 0].Picture = picture["img/checkbox_true.png"]
+    ELSE
+        tableview1[i, 0].Picture = picture["img/checkbox_false.png"] 
+    ENDIF 
+    '畫出第三欄
+    tableview1[i, 2].Text = fulldata[i, 14].Text
+    '如果有定義alias，則使用alias
+    IF Trim(fulldata[i, 2].Text) <> "" THEN 
+        tableview1[i, 2].text = fulldata[i, 2].Text
+    ENDIF 
+    '如果是預設，就加上打勾的圖
+    IF fulldata[i, 0].text = DefauleInputMethod THEN 
+        tableview1[i, 1].Picture = picture["icon:/small/apply"]
+    ENDIF 
+    '畫第四欄，快速鍵
+    IF Trim(fulldata[i, 1].text) <> "" THEN 
+        tableview1[i, 3].text = "Ctrl+Alt+" & fulldata[i, 1].Text
+    ELSE 
+        tableview1[i, 3].text = "無"
+    ENDIF 
+    '畫第五欄，內鍵
+    FOR j = 0 TO DefaultInputMethods.Length - 1
+        IF fulldata[i, 0].Text = DefaultInputMethods[j]
+             '有比對到的話，第五欄改成<內鍵>
+             tableview1[i, 4].Text = ("<built-in>")
+        ENDIF 
+    NEXT 
+NEXT   
+  
+END
+
+
+
+PUBLIC SUB BUTTOM_ATTRIB_Click()
+'例外處理，只有新酷音才要用他自己設定檔
+ IF fulldata[tableview1.Row, 0].Text = "chewing" THEN 
+    FormAttribChewing.Visible = TRUE
+    FormAttribChewing.sets(fulldata[tableview1.row, 15].Text, fulldata[tableview1.row, 16].Text, fulldata[tableview1.row, 17].Text)
+ ELSE 
+    FormAttrib.Visible = TRUE
+    
+  'fulldata.Columns[4].Text = "AutoCompose"
+  'fulldata.Columns[5].Text = "AutoUpChar"
+  'fulldata.Columns[6].Text = "SpaceAutoUp"
+  'fulldata.Columns[7].Text = "SelectKeyShift"
+  'fulldata.Columns[8].Text = "SpaceIgnore"
+  'fulldata.Columns[9].Text = "SpaceReset"
+  'fulldata.Columns[10].Text = "WildEnable"
+  'fulldata.Columns[11].Text = "EndKey"
+  'fulldata.Columns[12].Text = "DisableSelectList"    
+    FormAttrib.sets(fulldata[tableview1.row, 0].Text, fulldata[tableview1.row, 14].Text, fulldata[tableview1.row, 4].Text, fulldata[tableview1.row, 5].Text, fulldata[tableview1.row, 6].Text, fulldata[tableview1.row, 7].Text, fulldata[tableview1.row, 8].Text, fulldata[tableview1.row, 9].Text, fulldata[tableview1.row, 10].Text, fulldata[tableview1.row, 11].Text, fulldata[tableview1.row, 12].Text, fulldata[tableview1.row, 13].Text)
+ ENDIF 
+END 
+  
+PUBLIC SUB CHEWING_SETTING(set_KeyMap AS String, set_SelectionKeys AS String, set_CapsLockMode AS String)
+  DIM i AS Integer
+  FOR i = 0 TO fulldata.Rows.Count - 1   
+    IF fulldata[i, 0].Text = "chewing" THEN
+        '只處理新酷音
+        '更新最後的15 16 17
+        fulldata[i, 15].Text = set_KeyMap
+        fulldata[i, 16].Text = set_SelectionKeys
+        fulldata[i, 17].Text = set_CapsLockMode
+    ENDIF 
+  NEXT 
+END
+  
+PUBLIC SUB ATTRIB_SETTING(METHOD_INPUT_ENGLISH_INPUT AS String, AutoCompose_INPUT AS String, AutoUpChar_INPUT AS String, AutoFullUp_INPUT AS String, SpaceAutoUp_INPUT AS String, SelectKeyShift_INPUT AS String, SpaceIgnore_INPUT AS String, SpaceReset_INPUT AS String, WildEnable_INPUT AS String, EndKey_INPUT AS String, DisableSelectList_INPUT AS String)
+    DIM i AS Integer
+  '後處理
+  IF AutoCompose_INPUT = "0" THEN 
+    AutoCompose_INPUT = "No"
+  ELSE 
+    AutoCompose_INPUT = "Yes"
+  ENDIF 
+  
+  IF AutoUpChar_INPUT = "0" THEN 
+    AutoUpChar_INPUT = "No"
+  ELSE 
+    AutoUpChar_INPUT = "Yes"
+  ENDIF 
+  
+  IF AutoFullUp_INPUT = "0" THEN 
+    AutoFullUp_INPUT = "No"
+  ELSE 
+    AutoFullUp_INPUT = "Yes"
+  ENDIF 
+    
+  IF SpaceAutoUp_INPUT = "0" THEN 
+    SpaceAutoUp_INPUT = "No"    
+  ELSE 
+    SpaceAutoUp_INPUT = "Yes"
+  ENDIF 
+  
+  IF SelectKeyShift_INPUT = "0" THEN 
+    SelectKeyShift_INPUT = "No"
+  ELSE 
+    SelectKeyShift_INPUT = "Yes"
+  ENDIF 
+  
+  IF SpaceIgnore_INPUT = "0" THEN 
+    SpaceIgnore_INPUT = "No"
+  ELSE 
+    SpaceIgnore_INPUT = "Yes"
+  ENDIF 
+  
+  IF SpaceReset_INPUT = "0" THEN 
+    SpaceReset_INPUT = "No"
+  ELSE 
+    SpaceReset_INPUT = "Yes"
+  ENDIF 
+  
+  IF WildEnable_INPUT = "0"
+    WildEnable_INPUT = "No"
+  ELSE 
+    WildEnable_INPUT = "Yes"
+  ENDIF 
+  
+  IF EndKey_INPUT = "0" THEN 
+    EndKey_INPUT = "No"
+  ELSE 
+    EndKey_INPUT = "Yes"
+  ENDIF 
+  'DisableSelectList_INPUT 
+  
+  FOR i = 0 TO fulldata.Rows.Count - 1
+    IF fulldata[i, 0].Text = METHOD_INPUT_ENGLISH_INPUT THEN 
+       fulldata[i, 4].Text = AutoCompose_INPUT
+       fulldata[i, 5].Text = AutoUpChar_INPUT
+       fulldata[i, 6].Text = AutoFullUp_INPUT
+       fulldata[i, 7].Text = SpaceAutoUp_INPUT
+       fulldata[i, 8].Text = SelectKeyShift_INPUT
+       fulldata[i, 9].Text = SpaceIgnore_INPUT
+       fulldata[i, 10].Text = SpaceReset_INPUT
+       fulldata[i, 11].Text = WildEnable_INPUT
+       fulldata[i, 12].Text = EndKey_INPUT
+       fulldata[i, 13].Text = DisableSelectList_INPUT
+    ENDIF 
+  NEXT 
+END
+
+PUBLIC SUB getfullnames() AS Array
+  DIM i AS Integer
+  DIM temp_string AS String  
+  FOR i = 0 TO fulldata.Rows.Count - 1
+    IF Trim(fulldata[i, 14].Text) <> "" THEN 
+        temp_string = temp_string & fulldata[i, 0].Text
+        IF i <> fulldata.Rows.Count - 1 THEN 
+            temp_string = temp_string & ","
+        ENDIF 
+    ENDIF 
+  NEXT     
+  RETURN Split(temp_string, ",")
+END
+
+PUBLIC SUB realdata_Click()
+
+  
+
+END
+
+
+
+PUBLIC SUB CLEAR_TABLES_Click()
+
+   DIM i AS Integer
+  FOR i = realdata.Rows.Count - 1 TO 0 STEP -1
+    realdata.Rows.Remove(i, 1)
+  NEXT 
+  realdata.Clear
+  realdata.Refresh
+
+  FOR i = fulldata.Rows.Count - 1 TO 0 STEP -1
+    fulldata.Rows.Remove(i, 1)    
+  NEXT 
+  fulldata.Clear
+  fulldata.Refresh
+  
+  FOR i = tableview1.Rows.Count - 1 TO 0 STEP -1
+    TableView1.Rows.Remove(i, 1)
+  NEXT 
+  tableview1.Clear
+  tableview1.Refresh
+END
+
+PUBLIC SUB Button1_Click()
+    WRITE_TO_PAN_Click()
+    WRITE_TO_OXIM_Click()
+  SHELL "oxim-agent -r" WAIT 
+  SHELL "rm -fr /tmp/aaa.gz" WAIT 
+  SHELL "rm -fr /tmp/cin.list" WAIT 
+  QUIT 
+
+END
+
+PUBLIC SUB WRITE_TO_PAN_Click()
+  DIM hfile AS File
+  DIM i AS Integer
+  DIM temp_for_file AS String
+  '先刪除舊的片語
+  SHELL "rm -fr ~/.oxim/tables/default.phr" WAIT 
+  'SHELL "echo \"\" > ~/.oxim/tables/default.phr" WAIT 
+  temp_for_file = ""
+  FOR i = 0 TO TableView2.Rows.Count - 1
+    temp_for_file = temp_for_file & tableview2[i, 0].Text & " \"" & tableview2[i, 1].Text & "\""
+    IF i <> tableview2.Rows.Count - 1
+        temp_for_file = temp_for_file & Chr(10)
+    ENDIF 
+  NEXT 
+  File.Save("~/.oxim/tables/default.phr", temp_for_file)
+END
+
+PUBLIC SUB WRITE_TO_OXIM_Click()
+    DIM oxim_for_file AS String
+    DIM i, j AS Integer
+    IF PreeditFontSize_INPUT.Value <> "0" THEN 
+        PreeditFontSize = PreeditFontSize_INPUT.Value
+    ENDIF 
+    IF SelectFontSize_INPUT.Value <> "0" THEN 
+        SelectFontSize = SelectFontSize_INPUT.Value
+    ENDIF 
+    IF StatusFontSize_INPUT.Value <> "0" THEN 
+        StatusFontSize = StatusFontSize_INPUT.Value
+    ENDIF 
+    IF MenuFontSize_INPUT.Value <> "0" THEN 
+        MenuFontSize = MenuFontSize_INPUT.Value
+    ENDIF 
+    IF SymbolFontSize_INPUT.Value <> "0" THEN 
+        SymbolFontSize = SymbolFontSize_INPUT.Value
+    ENDIF 
+    IF XcinFontSize_INPUT.Text <> "0" THEN 
+        XcinFontSize = XcinFontSize_INPUT.Value
+    ENDIF 
+    oxim_for_file = ""
+    oxim_for_file = oxim_for_file & "<SystemSetting>" & Chr(10)
+    oxim_for_file = oxim_for_file & "        DefaultFontName = \"" & Font_choice.Text & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        DefaultFontSize = \"" & DefaultFontSize & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        PreeditFontSize = \"" & PreeditFontSize & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        SelectFontSize = \"" & SelectFontSize & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        StatusFontSize = \"" & StatusFontSize & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        MenuFontSize = \"" & MenuFontSize & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        SymbolFontSize = \"" & SymbolFontSize & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        XcinFontSize = \"" & XcinFontSize & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        WinBoxColor = \"" & WinBoxColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        BorderColor = \"" & BorderColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        LightColor = \"" & LightColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        DarkColor = \"" & DarkColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        CursorColor = \"" & CursorColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        CursorFontColor = \"" & CursorFontColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        FontColor = \"" & FontColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        ConvertNameColor = \"" & ConvertNameColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        InputNameColor = \"" & InputNameColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        UnderlineColor = \"" & UnderlineColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        KeystrokeColor = \"" & KeystrokeColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        KeystrokeBoxColor = \"" & KeystrokeBoxColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        SelectFontColor = \"" & SelectFontColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        SelectBoxColor = \"" & SelectBoxColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        MenuBGColor = \"" & MenuBGColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        MenuFontColor = \"" & MenuFontColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        XcinBorderColor = \"" & XcinBorderColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        XcinBGColor = \"" & XcinBGColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        XcinFontColor = \"" & XcinFontColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        XcinStatusFGColor =\"" & XcinStatusFGColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        XcinStatusBGColor = \"" & XcinStatusBGColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        XcinCursorFGColor = \"" & XcinCursorFGColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        XcinCursorBGColor = \"" & XcinCursorBGColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        XcinUnderlineColor = \"" & XcinUnderlineColor & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        DefauleInputMethod = \"" & DefauleInputMethod & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        XcinStyleEnabled = \"" & XcinStyleEnabled & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "        OnSpotEnabled = \"" & OnSpotEnabled & "\"" & Chr(10)
+    oxim_for_file = oxim_for_file & "</SystemSetting>" & Chr(10)
+
+FOR i = 0 TO fulldata.Rows.Count - 1
+    oxim_for_file = oxim_for_file & Chr(10)
+    oxim_for_file = oxim_for_file & "#" & Chr(10)
+    oxim_for_file = oxim_for_file & "# " & fulldata[i, 14].Text & Chr(10)
+    oxim_for_file = oxim_for_file & "#" & Chr(10)
+    oxim_for_file = oxim_for_file & "<InputMethod \"" & fulldata[i, 0].Text & "\">" & Chr(10)
+    FOR j = 1 TO 17              
+        IF Trim(fulldata[i, j].Text) <> "" AND j <> 14 THEN 
+            IF j = 1 OR j = 3 THEN '不用加上雙引號的
+                oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = " & "" & fulldata[i, j].Text & "" & Chr(10)
+            ELSE 
+                oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = " & "\"" & fulldata[i, j].Text & "\"" & Chr(10)
+            ENDIF 
+        ELSE IF Trim(fulldata[i, j].Text) = "" THEN 
+            '加入，如果有缺值，自動補上安全值
+            'fulldata.Columns[3].Text = "Circular"
+            'fulldata.Columns[4].Text = "AutoCompose"
+            'fulldata.Columns[5].Text = "AutoUpChar"
+            'fulldata.Columns[6].Text = "AutoFullUp"
+            'fulldata.Columns[7].Text = "SpaceAutoUp"
+            'fulldata.Columns[8].Text = "SelectKeyShift"
+            'fulldata.Columns[9].Text = "SpaceIgnore"
+            'fulldata.Columns[10].Text = "SpaceReset"
+            'fulldata.Columns[11].Text = "WildEnable"
+            'fulldata.Columns[12].Text = "EndKey"
+            'fulldata.Columns[13].Text = "DisableSelectList"
+            'fulldata.Columns[14].Text = "Method_Chinese_Name" '取得method上二列後的中文
+            'fulldata.Columns[15].Text = "KeyMap" '新酷音用的
+            'fulldata.Columns[16].Text = "SelectionKeys" '新酷音用的
+            'fulldata.Columns[17].Text = "CapsLockMode" '新酷音用的            
+            SELECT CASE (j)
+                CASE 3
+                    oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = No" & Chr(10)
+                CASE 4
+                    oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = \"Yes\"" & Chr(10)
+                CASE 5
+                    oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = \"Yes\"" & Chr(10)
+                CASE 6
+                    oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = \"Yes\"" & Chr(10)
+                CASE 7
+                    oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = \"Yes\"" & Chr(10)
+                CASE 8
+                    oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = \"No\"" & Chr(10)
+                CASE 9
+                    oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = \"No\"" & Chr(10)
+                CASE 10
+                    oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = \"No\"" & Chr(10)
+                CASE 11
+                    oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = \"No\"" & Chr(10)
+                CASE 12
+                    oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = \"No\"" & Chr(10)
+                CASE 13
+                    oxim_for_file = oxim_for_file & "        " & fulldata.Columns[j].Text & " = \"None\"" & Chr(10)
+            END SELECT
+        ENDIF 
+ 
+    NEXT 
+    oxim_for_file = oxim_for_file & "</InputMethod>" & Chr(10)
+NEXT 
+    
+    SHELL "rm -fr ~/.oxim/oxim.conf" WAIT 
+    File.Save("~/.oxim/oxim.conf", oxim_for_file)    
+END
+
+PUBLIC SUB DELETE_BUTTON_Click()
+    DIM YES_NO AS Integer
+    DIM messages AS String
+    DIM rmessage AS String
+    DIM cmessage AS String
+    messages = ("It'll remove the input method you choose from your computer,\n")
+    messages &= ("and cannot use it again, are you sure to do?")
+    rmessage = ("_YRemove")
+    rmessage = Replace(rmessage, "_", "&")
+    cmessage = ("_NCancel")
+    cmessage = Replace(cmessage, "_", "&")
+  YES_NO = Message.Question(messages, rmessage, cmessage)
+  'Message(YES_NO)
+  IF YES_NO = 1 THEN 
+  '  Message("rm -fr ~/.oxim/tables/" & fulldata[tableview1.row, 0].Text & ".tab")
+    SHELL "rm -fr ~/.oxim/tables/" & fulldata[tableview1.row, 0].Text & ".tab" WAIT 
+    SHELL "oxim-agent -r" WAIT 
+    FMain.Form_Open()
+  ENDIF 
+END
+
+PUBLIC SUB CHECK_RESTART_Click()
+ DIM temp_cmd AS String
+ DIM get_temp_cmd AS String
+ DIM get_temp_array AS Array
+ DIM counts AS Integer = 0
+ DIM i AS Integer
+ temp_cmd = "ps x|grep -o -e \"gbr2[^g]*oxim-setup-gambas\""
+ 'ps aux|grep oxim-setup-gambas|awk '{print $11}'|grep gbr2
+
+ SHELL temp_cmd TO get_temp_cmd
+ get_temp_array = Split(get_temp_cmd, Chr(10))
+ FOR i = 0 TO get_temp_array.Length - 1
+    IF Trim(get_temp_array[i]) <> "" THEN 
+        counts = counts + 1
+    ENDIF 
+ NEXT 
+ 
+ IF counts > 1 THEN  
+    'Message("系統已經啟動過了...")
+    QUIT 
+ ENDIF  
+
+END
+
+PUBLIC SUB TabStrip1_Click()
+
+  
+
+END
+
+PUBLIC SUB CHECK_ETC_OXIM_CONF_Click()
+    DIM i, j, k AS Integer
+    DIM etc_oxim_conf_string AS String
+    DIM etc_oxim_conf_array AS Array
+    DIM oxim_conf_array_temp AS Array
+    DIM oxim_conf_array AS Array
+    DIM for_method_array AS Array
+    DIM for_method_code_array AS Array
+  SHELL "cat /etc/oxim/oxim.conf" TO etc_oxim_conf_string
+  k = 0
+  etc_oxim_conf_array = Split(etc_oxim_conf_string, Chr(10))
+  FOR i = 0 TO etc_oxim_conf_array.Length - 1
+   oxim_conf_array_temp = Split(etc_oxim_conf_array[i], "=")
+   FOR j = 0 TO oxim_conf_array_temp.Length - 1
+     oxim_conf_array_temp[j] = Trim(oxim_conf_array_temp[j])
+   NEXT 
+   IF oxim_conf_array_temp.Length > 1 THEN 
+     IF oxim_conf_array_temp[0] = "DefaultFontName" THEN 
+      Font_choice.text = Trim(Replace(Replace(oxim_conf_array_temp[1], "\"", ""), "# 預設字型名稱", ""))
+     ENDIF 
+     IF oxim_conf_array_temp[0] = "DefauleInputMethod" THEN 
+        DefauleInputMethod = Trim(Replace(Replace(oxim_conf_array_temp[1], "\"", ""), "# 預設的輸入法名稱", ""))
+     ENDIF 
+     
+     '組字區PreeditFontSize
+     IF oxim_conf_array_temp[0] = "PreeditFontSize" THEN 
+        PreeditFontSize_INPUT.Value = Replace(oxim_conf_array_temp[1], "\"", "")
+     ELSE IF oxim_conf_array_temp[0] = "SelectFontSize" THEN 
+        SelectFontSize_INPUT.Value = Replace(oxim_conf_array_temp[1], "\"", "")
+     ELSE IF oxim_conf_array_temp[0] = "StatusFontSize" THEN 
+        StatusFontSize_INPUT.Value = Replace(oxim_conf_array_temp[1], "\"", "")
+     ELSE IF oxim_conf_array_temp[0] = "MenuFontSize" THEN 
+        MenuFontSize_INPUT.Value = Replace(oxim_conf_array_temp[1], "\"", "")
+     ELSE IF oxim_conf_array_temp[0] = "SymbolFontSize" THEN 
+        SymbolFontSize_INPUT.Value = Replace(oxim_conf_array_temp[1], "\"", "")        
+     ELSE IF oxim_conf_array_temp[0] = "XcinFontSize" THEN 
+        XcinFontSize_INPUT.Value = Replace(oxim_conf_array_temp[1], "\"", "")             
+     ELSE IF oxim_conf_array_temp[0] = "WinBoxColor" THEN
+        WinBoxColor = Replace(oxim_conf_array_temp[1], "\"", "")             
+     ELSE IF oxim_conf_array_temp[0] = "BorderColor" THEN
+        BorderColor = Replace(oxim_conf_array_temp[1], "\"", "")                  
+     ELSE IF oxim_conf_array_temp[0] = "LightColor" THEN
+        LightColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "DarkColor" THEN
+        DarkColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "CursorColor" THEN
+        CursorColor = Replace(oxim_conf_array_temp[1], "\"", "")                      
+     ELSE IF oxim_conf_array_temp[0] = "CursorFontColor" THEN
+        CursorFontColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "FontColor" THEN
+        FontColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "ConvertNameColor" THEN
+        ConvertNameColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "InputNameColor" THEN
+        InputNameColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "UnderlineColor" THEN
+        UnderlineColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "KeystrokeColor" THEN
+        KeystrokeColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "KeystrokeBoxColor" THEN
+        KeystrokeBoxColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "SelectFontColor" THEN
+        SelectFontColor = Replace(oxim_conf_array_temp[1], "\"", "")      
+     ELSE IF oxim_conf_array_temp[0] = "SelectBoxColor" THEN
+        SelectBoxColor = Replace(oxim_conf_array_temp[1], "\"", "")                                      
+     ELSE IF oxim_conf_array_temp[0] = "MenuBGColor" THEN
+        MenuBGColor = Replace(oxim_conf_array_temp[1], "\"", "")              
+     ELSE IF oxim_conf_array_temp[0] = "MenuFontColor" THEN
+        MenuFontColor = Replace(oxim_conf_array_temp[1], "\"", "")              
+     ELSE IF oxim_conf_array_temp[0] = "XcinBorderColor" THEN
+        XcinBorderColor = Replace(oxim_conf_array_temp[1], "\"", "")              
+     ELSE IF oxim_conf_array_temp[0] = "XcinBGColor" THEN
+        XcinBGColor = Replace(oxim_conf_array_temp[1], "\"", "")              
+     ELSE IF oxim_conf_array_temp[0] = "XcinFontColor" THEN
+        XcinFontColor = Replace(oxim_conf_array_temp[1], "\"", "")              
+     ELSE IF oxim_conf_array_temp[0] = "XcinStatusFGColor" THEN
+        XcinStatusFGColor = Replace(oxim_conf_array_temp[1], "\"", "")       
+     ELSE IF oxim_conf_array_temp[0] = "XcinStatusBGColor" THEN
+        XcinStatusBGColor = Replace(oxim_conf_array_temp[1], "\"", "")       
+     ELSE IF oxim_conf_array_temp[0] = "XcinCursorFGColor" THEN
+        XcinCursorFGColor = Replace(oxim_conf_array_temp[1], "\"", "")       
+     ELSE IF oxim_conf_array_temp[0] = "XcinCursorBGColor" THEN
+        XcinCursorBGColor = Replace(oxim_conf_array_temp[1], "\"", "")                               
+     ELSE IF oxim_conf_array_temp[0] = "XcinUnderlineColor" THEN
+        XcinUnderlineColor = Replace(oxim_conf_array_temp[1], "\"", "")       
+     ELSE IF oxim_conf_array_temp[0] = "XcinStyleEnabled" THEN
+        XcinStyleEnabled = Trim(Replace(Replace(oxim_conf_array_temp[1], "\"", ""), "# 使用 XCIN 輸入風格", ""))
+     ELSE IF oxim_conf_array_temp[0] = "OnSpotEnabled" THEN
+        OnSpotEnabled = Trim(Replace(Replace(oxim_conf_array_temp[1], "\"", ""), "# 開啟 On The Spot 風格", ""))
+     ELSE IF oxim_conf_array_temp[0] = "DefaultFontSize" THEN 
+        DefaultFontSize = Replace(oxim_conf_array_temp[1], "\"", "")                                              
+     ENDIF      
+   ENDIF 
+   for_method_array = Split(etc_oxim_conf_array[i], " ")
+   IF for_method_array.Length > 1 THEN 
+    IF for_method_array[0] = "<InputMethod" THEN 
+        fulldata.Rows.Count = fulldata.Rows.Count + 1
+        fulldata[k, 0].Text = Trim(Replace(Replace(for_method_array[1], "\"", ""), ">", ""))
+        'fulldata[k, 14].Text = Split(etc_oxim_conf_array[i - 2], " ")[1]
+        '抓中文名稱
+        IF fulldata[k, 0].Text = "unicode" THEN 
+            fulldata[k, 14].Text = ("Unicode")
+        ELSE IF fulldata[k, 0].Text = "chewing" THEN 
+            fulldata[k, 14].Text = ("chewing")
+        ENDIF 
+    ENDIF 
+   ENDIF  
+   IF Trim(etc_oxim_conf_array[i]) = "</InputMethod>" THEN 
+        k = k + 1
+   ENDIF 
+   for_method_code_array = Split(etc_oxim_conf_array[i], "=")
+   IF for_method_code_array.Length > 1 THEN     
+    IF Trim(for_method_code_array[0]) = "SetKey" THEN 
+        fulldata[k, 1].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "AliasName" THEN 
+        fulldata[k, 2].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "Circular" THEN 
+        fulldata[k, 3].Text = Trim(Replace(for_method_code_array[1], "\"", ""))        
+    ELSE IF Trim(for_method_code_array[0]) = "AutoCompose" THEN 
+        fulldata[k, 4].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "AutoUpChar" THEN 
+        fulldata[k, 5].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "AutoFullUp" THEN     
+        fulldata[k, 6].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "SpaceAutoUp" THEN     
+        fulldata[k, 7].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "SelectKeyShift" THEN 
+        fulldata[k, 8].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "SpaceIgnore" THEN 
+        fulldata[k, 9].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "SpaceReset" THEN 
+        fulldata[k, 10].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "WildEnable" THEN 
+        fulldata[k, 11].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "EndKey" THEN 
+        fulldata[k, 12].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "DisableSelectList" THEN 
+        fulldata[k, 13].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "KeyMap" THEN 
+        fulldata[k, 15].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "SelectionKeys" THEN 
+        fulldata[k, 16].Text = Trim(Replace(for_method_code_array[1], "\"", ""))
+    ELSE IF Trim(for_method_code_array[0]) = "CapsLockMode" THEN 
+        fulldata[k, 17].Text = Trim(Replace(for_method_code_array[1], "\"", ""))        
+    ENDIF  
+   ENDIF 
+ NEXT 
+
+
+END
+
+
+
+PUBLIC SUB Form_Close()
+ SHELL "rm -fr /tmp/aaa.gz" WAIT 
+ SHELL "rm -fr /tmp/cin.list" WAIT 
+   ME.Close
+ QUIT 
+
+END
+
+
+
+
+
+
+
+
+
+PUBLIC SUB TableView2_MouseUp()
+
+      'tableview2[tableview2.Row, 1].Text = InputBox("New Contents,please...", "Edit", tableview2[tableview2.Row, 1].Text)  
+
+  InputDialog.TextBox1.Text = tableview2[tableview2.Row, 1].Text
+  InputDialog.textbox2.text = tableview2.Row
+  InputDialog.Visible = TRUE
+  InputDialog.Center()
+  tableview2.Enabled = FALSE
+  tableview2.Refresh
+
+END
+
+PUBLIC SUB renames_Click()
+
+  DIM settodefault_text AS String
+  DIM settodefault_space AS String
+  settodefault_space = "  "
+  FMain.settodefault.Text = settodefault_space & ("Default")
+  
+  FMain.Button1.Text = Replace(FMain.Button1.Text, "_", "&")
+  FMain.Button2.Text = Replace(FMain.Button2.Text, "_", "&")
+  FMain.BUTTOM_ATTRIB.text = Replace(FMain.BUTTOM_ATTRIB.text, "_", "&")
+  FMain.TabStrip1[0].Text = Replace(FMain.TabStrip1[0].Text, "_", "&")
+  FMain.TabStrip1[1].Text = Replace(FMain.TabStrip1[1].Text, "_", "&")
+  FMain.TabStrip1[2].Text = Replace(FMain.TabStrip1[2].Text, "_", "&")
+  FMain.TabStrip1[3].Text = Replace(FMain.TabStrip1[3].Text, "_", "&")
+  FMain.Frame1.text = Replace(FMain.Frame1.Text, "_", Chr(38))
+  'FMain.settodefault.Text = Replace(FMain.settodefault.Text, "_", Chr(38))
+  FormAttrib.Button1.Text = Replace(FormAttrib.Button1.Text, "_", "&")
+  FormAttrib.Button2.Text = Replace(FormAttrib.Button2.Text, "_", "&")
+  FormAttrib.Button3.Text = Replace(FormAttrib.Button3.Text, "_", "&")
+  FormAttribChewing.Button1.Text = Replace(FormAttribChewing.Button1.Text, "_", "&")
+  FormAttribChewing.Button2.Text = Replace(FormAttribChewing.Button2.Text, "_", "&")
+  FormInstallOxim.TabStrip1[0].text = Replace(FormInstallOxim.TabStrip1[0].text, "_", "&")
+  FormInstallOxim.TabStrip1[1].text = Replace(FormInstallOxim.TabStrip1[1].text, "_", "&")
+  FormInstallOxim.BUTTON_YES.text = Replace(FormInstallOxim.BUTTON_YES.text, "_", "&")
+  FormInstallOxim.BUTTON_NO.text = Replace(FormInstallOxim.BUTTON_NO.text, "_", "&")
+  InputDialog.Button1.Text = Replace(InputDialog.Button1.Text, "_", "&")
+  InputDialog.Button2.Text = Replace(InputDialog.Button2.Text, "_", "&")
+
+END
+
+
+
+

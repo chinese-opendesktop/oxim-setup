@@ -1,0 +1,122 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>Sunpinyin</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>Sunpinyin</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>321</width>
+            <height>143</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>SunPinYin Property Settings</string>
+    </property>
+    <widget class="QButtonGroup">
+        <property name="name">
+            <cstring>buttonGroup9</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>10</y>
+                <width>280</width>
+                <height>70</height>
+            </rect>
+        </property>
+        <property name="title">
+            <string>PinyinScheme</string>
+        </property>
+        <widget class="QRadioButton">
+            <property name="name">
+                <cstring>QuanPin</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>22</x>
+                    <y>30</y>
+                    <width>126</width>
+                    <height>26</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>QuanPin</string>
+            </property>
+        </widget>
+        <widget class="QRadioButton">
+            <property name="name">
+                <cstring>ShuangPin</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>150</x>
+                    <y>30</y>
+                    <width>126</width>
+                    <height>26</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>ShuangPin</string>
+            </property>
+        </widget>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>OK</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>70</x>
+                <y>90</y>
+                <width>121</width>
+                <height>41</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>OK</string>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>Cancel</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>210</x>
+                <y>90</y>
+                <width>91</width>
+                <height>41</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Cancel</string>
+        </property>
+    </widget>
+</widget>
+<connections>
+    <connection>
+        <sender>Cancel</sender>
+        <signal>clicked()</signal>
+        <receiver>Sunpinyin</receiver>
+        <slot>close()</slot>
+    </connection>
+    <connection>
+        <sender>OK</sender>
+        <signal>clicked()</signal>
+        <receiver>Sunpinyin</receiver>
+        <slot>accept()</slot>
+    </connection>
+</connections>
+<includes>
+    <include location="local" impldecl="in declaration">common.h</include>
+    <include location="local" impldecl="in implementation">Sunpinyin.ui.h</include>
+</includes>
+<functions>
+    <function access="private" specifier="non virtual">init()</function>
+</functions>
+<pixmapinproject/>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

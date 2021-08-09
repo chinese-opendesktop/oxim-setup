@@ -1,0 +1,148 @@
+' Gambas class file
+
+
+PUBLIC SUB Form_Open()
+
+  ME.Center
+
+END
+
+
+
+PUBLIC SUB Button2_Click()
+
+  FormAttrib.Visible = FALSE
+
+END
+
+PUBLIC SUB Button1_Click()
+
+  FormAttrib.Visible = FALSE
+  IF Trim(DisableSelectList.text) = "" THEN 
+    DisableSelectList.text = "None"
+  ENDIF 
+  FMain.ATTRIB_SETTING(METHOD_INPUT_ENGLISH_LABEL.Text, Abs(AutoCompose.Value), Abs(AutoUpChar.value), Abs(AutoFullUp.Value), Abs(SpaceAutoUp.value), Abs(SelectKeyShift.value), Abs(SpaceIgnore_0.value), Abs(SpaceReset.value), Abs(WildEnable.value), Abs(EndKey.value), DisableSelectList.text)
+    
+END
+
+PUBLIC SUB sets(METHOD_INPUT_ENGLISH AS String, METHOD_INPUT_CHINESE AS String, AutoCompose_Input AS String, AutoUpChar_Input AS String, AutoFullUp_Input AS String, SpaceAutoUp_Input AS String, SelectKeyShift_Input AS String, SpaceIgnore_Input AS String, SpaceReset_Input AS String, WildEnable_Input AS String, EndKey_Input AS String, DisableSelectList_Input AS String)
+  'fulldata.Columns[4].Text = "AutoCompose"
+  'fulldata.Columns[5].Text = "AutoUpChar"
+  'fulldata.Columns[6].Text = "SpaceAutoUp"
+  'fulldata.Columns[7].Text = "SelectKeyShift"
+  'fulldata.Columns[8].Text = "SpaceIgnore"
+  'fulldata.Columns[9].Text = "SpaceReset"
+  'fulldata.Columns[10].Text = "WildEnable"
+  'fulldata.Columns[11].Text = "EndKey"
+  'fulldata.Columns[12].Text = "DisableSelectList"    
+   METHOD_INPUT_ENGLISH_LABEL.Text = METHOD_INPUT_ENGLISH
+   METHOD_INPUT_CHINESE_LABEL.Text = METHOD_INPUT_CHINESE
+   IF AutoCompose_Input = "Yes" THEN 
+    AutoCompose.Value = 1
+   ELSE 
+    AutoCompose.Value = 0
+   ENDIF 
+
+   IF AutoUpChar_Input = "Yes" THEN 
+    AutoUpChar.Value = 1
+    Frame1.Enabled = TRUE
+   ELSE 
+    AutoUpChar.Value = 0    
+    Frame1.Enabled = FALSE
+   ENDIF   
+
+   IF AutoFullUp_Input = "Yes" THEN 
+   Frame2.Enabled = TRUE
+    AutoFullUp.Value = 1    
+   ELSE 
+   Frame2.Enabled = FALSE
+    AutoFullUp.Value = 0
+   ENDIF      
+   
+   IF SpaceAutoUp_Input = "Yes" THEN 
+    SpaceAutoUp.Value = 1
+   ELSE 
+    SpaceAutoUp.Value = 0
+   ENDIF 
+
+   IF SelectKeyShift_Input = "Yes" THEN 
+    SelectKeyShift.Value = 1
+   ELSE 
+    SelectKeyShift.Value = 0
+   ENDIF    
+   
+   IF SpaceIgnore_Input = "Yes" THEN 
+     SpaceIgnore_0.Value = 1    
+   ELSE 
+     SpaceIgnore_1.Value = 1
+   ENDIF 
+   
+   IF SpaceReset_Input = "Yes" THEN 
+    SpaceReset.Value = 1
+   ELSE 
+    SpaceReset.Value = 0
+   ENDIF 
+   
+   IF WildEnable_Input = "Yes" THEN 
+    WildEnable.Value = 1
+   ELSE 
+    WildEnable.Value = 0
+   ENDIF 
+   
+   IF EndKey_Input = "Yes" THEN 
+    EndKey.Value = 1    
+   ELSE 
+    EndKey.Value = 0
+   ENDIF 
+   
+   IF Trim(DisableSelectList_Input) = "None" THEN 
+    DisableSelectList_Input = ""
+   ENDIF 
+    DisableSelectList.text = DisableSelectList_Input
+END
+
+PUBLIC SUB AutoUpChar_Click()
+
+  IF Abs(AutoUpChar.Value) = 1 THEN     
+    Frame1.Enabled = TRUE
+  ELSE     
+    Frame1.Enabled = FALSE
+  ENDIF 
+
+END
+
+PUBLIC SUB AutoFullUp_Click()
+
+    IF Abs(AutoFullUp.Value) = 1 THEN 
+    Frame2.Enabled = TRUE
+  ELSE 
+    Frame2.Enabled = FALSE
+  ENDIF 
+
+END
+
+
+
+PUBLIC SUB Button3_Click()
+
+  AutoCompose.Value = 1
+  WildEnable.Value = 1
+  SpaceReset.Value = 1
+  AutoUpChar.Value = 1
+  Frame1.Enabled = TRUE
+  SpaceAutoUp.Value = 0
+  SelectKeyShift.Value = 0
+  Frame2.Enabled = FALSE
+  AutoFullUp.Value = 0
+  SpaceIgnore_0.Value = 1
+  EndKey.Value = 0
+  DisableSelectList.text = ""
+  
+
+END
+
+PUBLIC SUB DisableSelectList_KeyPress()
+
+  
+
+END

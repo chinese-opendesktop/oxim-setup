@@ -1,0 +1,128 @@
+<div id="dlgDeleteIMConfirm" title="移除輸入法">
+    <div>
+	這樣會將您選定的輸入法從您的電腦中移除，<br />
+	無法再繼續使用，真的要這樣做嗎？
+    </div>
+</div>
+<div id="dlgGlobal" title="輸入法通用設定">
+    <table border=0>
+	<tr>
+	    <td style="width: 150px" nowrap>輸入法：</td>
+	    <td id="labelIMName"></td>
+	</tr>
+	<tr>
+	    <td>別名：</td>
+	    <td><input id="inputAlias" type="text" name="" value="" style="width:90%"></td>
+	</tr>
+	<tr>
+	    <td colspan="100">
+		<input id="chkHotkey" type="checkbox">使用按鍵組合 <br />Ctrl+Alt+
+		<select id="selHotkey">
+		    <option>1</option>
+		    <option>2</option>
+		    <option>3</option>
+		    <option>4</option>
+		    <option>5</option>
+		    <option>6</option>
+		    <option>7</option>
+		    <option>8</option>
+		    <option>9</option>
+		    <option>0</option>
+		</select>
+	    </td>
+	</tr>
+    </table>
+</div>
+<div id="dlgSunpinyin" title="昇陽拼音輸入法屬性設定">
+    <fieldset>
+	<legend>拼音方式</legend>
+	<input type="radio" name="schema" value="1">全拼
+	<input type="radio" name="schema" value="2">雙拼
+    </fieldset>
+</div>
+<div id="dlgChewing" title="新酷音輸入法屬性">
+    <table border=0>
+	<tr>
+	    <td style="width: 50%">
+		<fieldset>
+		    <legend>鍵盤對應</legend>
+		    <input type="radio" name="keyboard" value="0">標準注音鍵盤<br />
+		    <input type="radio" name="keyboard" value="1">許氏<br />
+		    <input type="radio" name="keyboard" value="2">IBM<br />
+		    <input type="radio" name="keyboard" value="3">精業<br />
+		    <input type="radio" name="keyboard" value="4">倚天鍵盤<br />
+		    <input type="radio" name="keyboard" value="5">倚天 26 鍵<br />
+		    <input type="radio" name="keyboard" value="6">ＤＶＯＲＡＫ<br />
+		    <input type="radio" name="keyboard" value="7">ＤＶＯＲＡＫ 許氏<br />
+		    <input type="radio" name="keyboard" value="8">漢語拼音<br />
+		</fieldset>
+	    </td>
+	    <td>
+		<fieldset>
+		    <legend>選字鍵</legend>
+		    <input type="radio" name="selectkey" value="0">1234567890 選字<br />
+		    <input type="radio" name="selectkey" value="1">qwertyuiop 選字<br />
+		    <input type="radio" name="selectkey" value="2">asdfghjkl; 選字<br />
+		    <input type="radio" name="selectkey" value="3">zxcvbnm,./ 選字
+		</fieldset>
+		<fieldset>
+		    <legend>CapsLock輸出</legend>
+		    <input type="radio" name="capslock" value="0">小寫
+		    <input type="radio" name="capslock" value="1">大寫
+		</fieldset>
+	    </td>
+	</tr>
+    </table>
+</div>
+<div id="dlgGen" title="輸入法屬性設定">
+    輸入法：<span id="labelIMName"></span><br />
+    <hr />
+    <input type="checkbox" name="AutoCompose">打字時，自動顯示組字結果。<br />
+    <input type="checkbox" name="WildEnable">啟用'*'、'?'萬用組字功能。<br />
+    <input type="checkbox" name="SpaceReset">錯誤時，按空白鍵自動清除。
+    <fieldset>
+	<legend><input type="checkbox" name="AutoUpChar">自動出字模式</legend>
+	<input type="checkbox" name="SpaceAutoUp">滿字根自動出字
+	<input type="checkbox" name="SelectKeyShift">選字鍵後移一位
+    </fieldset>
+    <fieldset>
+	<legend><input type="checkbox" name="AutoFullUp">自動出字模式</legend>
+	<input type="radio" name="SpaceIgnore" value="0">忽略後續空白
+	<input type="radio" name="SpaceIgnore" value="1">後續空白視為有效
+    </fieldset>
+    <input type="checkbox" name="EndKey">按下結束鍵出字。<br />
+    特殊字根設定：<input type="text" name="DisableSelectList" value="">
+</div>
+<div id="dlgInstall" title="">
+    <div id="atabs">
+	<ul>
+	    <li><a href="#ins-tabs-1">從本機安裝</a></li>
+	    <li><a href="#ins-tabs-2">從網路安裝</a></li>
+	</ul>
+	<div id="ins-tabs-1">
+	    <p>
+		請輸入檔案完整路徑名稱，或按一下「瀏覽」按鈕<br />
+		選擇; 如果是 *.cin 檔案的話，請確定該檔是 UTF-8<br />
+		編碼。
+	    </p>
+	    <p>
+		<input type="text" id="txtUploadFile" ><br />
+		<input type="button" id="frmUploadFile" value="瀏覽" />
+	    </p>
+	</div>
+	<div id="ins-tabs-2" style="height: 300px;overflow: auto">
+		<table id="treeNetwork">
+		    <thead>
+			<tr>
+			    <th id="labelNet1">請選擇下載站台</th>
+			    <th id="labelNet2"></th>
+			</tr>
+		    </thead>
+		    <tbody>
+			<!--//-->
+		    </tbody>		    
+		</table>
+		<button id="btnConnect"><img src="imgs/connect.png">連線</button>
+	</div>
+    </div>
+</div>

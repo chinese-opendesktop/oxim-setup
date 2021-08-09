@@ -1,0 +1,216 @@
+# Gambas Form File 2.0
+
+{ Form Form
+  MoveScaled(0,0,59,56)
+  Expand = True
+  Text = ("Open X Input Method Setting")
+  Border = Window.Fixed
+  { TabStrip1 TabStrip
+    MoveScaled(1,1,57,49)
+    Count = 4
+    Index = 0
+    Text = ("_Input Method")
+    { Button3 Button
+      MoveScaled(1,40,15,4)
+      Text = ("Install IM")
+      Picture = Picture["icon:/small/add"]
+    }
+    { DELETE_BUTTON Button
+      MoveScaled(19,40,15,4)
+      Enabled = False
+      Text = ("Remove IM")
+      Picture = Picture["icon:/small/remove"]
+    }
+    { settodefault Button
+      MoveScaled(46,18,10,4)
+      Enabled = False
+      Text = ("Default")
+      Picture = Picture["icon:/small/apply"]
+    }
+    { BUTTOM_KEY_SETTING Button
+      MoveScaled(46,23,10,4)
+      Enabled = False
+      Text = ("Gen. setting")
+    }
+    { BUTTOM_ATTRIB Button
+      MoveScaled(46,28,10,4)
+      Enabled = False
+      Text = ("Property")
+    }
+    { TableView1 TableView
+      MoveScaled(0,2,45,36)
+      Mode = Select.Single
+      Grid = False
+      Header = GridView.Horizontal
+    }
+    Index = 1
+    Text = ("_Fonts")
+    { Label1 Label
+      MoveScaled(1,1,9,4)
+      Text = ("Favor font:")
+    }
+    { Frame1 Frame
+      MoveScaled(1,6,55,38)
+      Text = ("Font Size(Pixels)")
+      { Label2 Label
+        MoveScaled(1,4,18,3)
+        Text = ("asse ar:")
+      }
+      { Label3 Label
+        MoveScaled(1,8,17,3)
+        Text = ("sel. ar:")
+      }
+      { Label4 Label
+        MoveScaled(1,12,18,3)
+        Text = ("st ar:")
+      }
+      { Label5 Label
+        MoveScaled(1,16,19,3)
+        Text = ("Quick mnu:")
+      }
+      { Label6 Label
+        MoveScaled(1,20,19,3)
+        Text = ("Symbl List:")
+      }
+      { Label7 Label
+        MoveScaled(1,24,19,3)
+        Text = ("XCIN Style:")
+      }
+      { PreeditFontSize_INPUT SpinBox
+        MoveScaled(11,4,11,3)
+      }
+      { SelectFontSize_INPUT SpinBox
+        MoveScaled(11,8,11,3)
+      }
+      { StatusFontSize_INPUT SpinBox
+        MoveScaled(11,12,11,3)
+      }
+      { MenuFontSize_INPUT SpinBox
+        MoveScaled(11,16,11,3)
+      }
+      { SymbolFontSize_INPUT SpinBox
+        MoveScaled(11,20,11,3)
+      }
+      { XcinFontSize_INPUT SpinBox
+        MoveScaled(11,24,11,3)
+      }
+      { ScrollView1 ScrollView
+        MoveScaled(23,2,30,34)
+        Background = Color.TextBackground
+        { PictureBox1 PictureBox
+          MoveScaled(1,1,11,6)
+          Picture = Picture["img/1.png"]
+        }
+        { PictureBox2 PictureBox
+          MoveScaled(14,1,7,9)
+          Picture = Picture["img/2.png"]
+        }
+        { PictureBox3 PictureBox
+          MoveScaled(1,8,10,6)
+          Picture = Picture["img/3.png"]
+        }
+        { PictureBox4 PictureBox
+          MoveScaled(1,14,25,8)
+          Picture = Picture["img/4.png"]
+        }
+        { PictureBox5 PictureBox
+          MoveScaled(1,23,11,8)
+          Picture = Picture["img/5.png"]
+        }
+        { PictureBox6 PictureBox
+          MoveScaled(14,23,11,8)
+          Picture = Picture["img/6.png"]
+        }
+      }
+    }
+    { Font_choice ComboBox
+      MoveScaled(10,1,46,4)
+      Text = ("ComboBox1")
+    }
+    Index = 2
+    Text = ("_Pharse")
+    { Panel2 Panel
+      MoveScaled(14,-1,1,1)
+    }
+    { TableView2 TableView
+      MoveScaled(1,1,28,43)
+      Expand = True
+      Mode = Select.Single
+      Header = GridView.Horizontal
+    }
+    { TextLabel1 TextLabel
+      MoveScaled(30,1,24,28)
+      Text = ("You can create pharse, word or symbol at left size of table, and when you input words, you can choose to press Alt+Shift function key to input more fast.")
+    }
+    Index = 3
+    Text = ("_About")
+    { Label8 Label
+      MoveScaled(1,-1,54,6)
+      Font = Font["+5"]
+      Text = ("Open X Input Method Setup 1.5.5")
+    }
+    { Label9 Label
+      MoveScaled(1,4,54,3)
+      Text = ("Author:Firefly <firefly@opendesktop.org.tw>")
+    }
+    { TextArea1 TextArea
+      MoveScaled(1,15,54,28)
+      Text = ("Copyright (c) 2009 by  OpenDesktop.org.tw\n\nThis program is free software; you can redistribute it and/or modify\n    it under the terms of the GNU General Public License as published by\n    the Free Software Foundation; either version 2 of the License, or\n    (at your option) any later version.\n\n    This program is distributed in the hope that it will be useful,\n    but WITHOUT ANY WARRANTY; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n    GNU General Public License for more details.\n\n    You should have received a copy of the GNU General Public License\n    along with this program; if not, write to the Free Software\n    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA")
+      ReadOnly = True
+    }
+    { Label11 Label
+      MoveScaled(1,12,24,3)
+      Font = Font["Bold"]
+      Text = ("Copyright:")
+    }
+    { TextLabel2 TextLabel
+      MoveScaled(1,9,54,3)
+      Text = ("Website:http://opendesktop.org.tw")
+    }
+    { Label10 Label
+      MoveScaled(1,7,55,2)
+      Text = ("             Feather Mountain (Gambas) <john@ossii.com.tw>")
+    }
+    Index = 0
+  }
+  { Button1 Button
+    MoveScaled(2,51,23,4)
+    Text = ("_OK")
+  }
+  { Button2 Button
+    MoveScaled(35,51,23,4)
+    Text = ("_Cancel")
+  }
+  { fulldata TableView
+    MoveScaled(1,62,151,37)
+    Header = GridView.Horizontal
+  }
+  { realdata TableView
+    MoveScaled(60,26,70,20)
+    Header = GridView.Horizontal
+  }
+  { CLEAR_TABLES Button
+    MoveScaled(61,18,16,3)
+    Text = ("CLEAR_TABLES")
+  }
+  { WRITE_TO_PAN Button
+    MoveScaled(61,2,16,3)
+    Text = ("\xE5\xAF\xAB\xE5\x85\xA5\xE7\x89\x87\xE8\xAA\x9E")
+  }
+  { WRITE_TO_OXIM Button
+    MoveScaled(61,6,16,3)
+    Text = ("\xE5\xAF\xAB\xE5\x85\xA5OXIM")
+  }
+  { CHECK_RESTART Button
+    MoveScaled(61,10,16,3)
+    Text = ("\xE6\xAA\xA2\xE6\x9F\xA5\xE7\xB3\xBB\xE7\xB5\xB1\xE9\x87\x8D\xE8\xA6\x86\xE5\x95\x9F\xE5\x8B\x95")
+  }
+  { CHECK_ETC_OXIM_CONF Button
+    MoveScaled(61,14,28,3)
+    Text = ("\xE7\x95\xB6\xE4\xBD\xBF\xE7\x94\xA8\xE8\x80\x85\xE7\x9B\xAE\xE9\x8C\x84\xE7\x9A\x84oxim.conf\xE4\xB8\x8D\xE8\xA6\x8B")
+  }
+  { renames Button
+    MoveScaled(61,22,16,3)
+    Text = ("\xE9\x87\x8D\xE6\x96\xB0\xE5\x91\xBD\xE5\x90\x8D\xE5\x95\x9F\xE5\x8B\x95\xE6\x8C\x89\xE9\x88\x95")
+  }
+}

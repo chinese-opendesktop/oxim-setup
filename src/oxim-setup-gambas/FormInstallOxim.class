@@ -1,0 +1,323 @@
+' Gambas class file
+
+
+PUBLIC SUB Form_Open()
+    
+    ME.Center
+    'SET_TO_DEFAULT_Click()    
+    
+    
+END
+PUBLIC SUB LOADTODEFAULT()
+  
+      SET_TO_DEFAULT_Click()              
+END
+
+PUBLIC SUB Button1_Click()
+
+
+  'DIM imageFile AS String 
+
+    'Dialog.Filter = ["*.jpg; *.jpeg; *.png; *.bmp", "Picture files"]
+    DIM home AS String
+  SHELL "echo ~/" TO home
+  Dialog.Path = home
+  IF Dialog.OpenFile(FALSE) THEN 
+   
+  ELSE 
+   INSTALL_PATH.Text = Dialog.Path
+  ENDIF 
+
+END
+
+PUBLIC SUB BUTTON_NO_Click()
+
+  ME.Visible = FALSE  
+  FMain.Visible = TRUE
+END
+
+PUBLIC SUB BUTTON_YES_Click()
+    DIM download_temp_string AS String
+    DIM oxim2tab_temp_string AS String
+  DIM i AS Integer
+
+  ME.Visible = FALSE
+  FMain.Visible = TRUE
+  IF INSTALL_PATH.Text <> "" THEN 
+    SHELL "cp " & INSTALL_PATH.Text & " ~/.oxim/tables "
+  ENDIF 
+  FOR i = 0 TO SELECT_TABLE.Rows.Count - 1        
+    IF Trim(SELECT_TABLE[i, 0].Text) <> "" THEN 
+        SHELL "rm -fr /tmp/" & Split(SELECT_TABLE[i, 0].Text, "/")[Split(SELECT_TABLE[i, 0].Text, "/").Length - 1] WAIT 
+        'download_temp_string = "wget " & SELECT_TABLE[i, 0].Text & " -O /tmp/" & Split(SELECT_TABLE[i, 0].Text, "/")[Split(SELECT_TABLE[i, 0].Text, "/").Length - 1] 
+        
+        'Message(download_temp_string)
+        'SHELL download_temp_string WAIT 
+        DownloaderModules.Download(SELECT_TABLE[i, 0].Text, "/tmp/" & Split(SELECT_TABLE[i, 0].Text, "/")[Split(SELECT_TABLE[i, 0].Text, "/").Length - 1])
+        oxim2tab_temp_string = "oxim2tab /tmp/" & Split(SELECT_TABLE[i, 0].Text, "/")[Split(SELECT_TABLE[i, 0].Text, "/").Length - 1] & " -o ~/.oxim/tables/" & Split(Split(SELECT_TABLE[i, 0].Text, "/")[Split(SELECT_TABLE[i, 0].Text, "/").Length - 1], ".")[0] & ".tab"
+        'PRINT download_temp_string & Chr(10)
+        'PRINT oxim2tab_temp_string & Chr(10)
+        SHELL oxim2tab_temp_string WAIT            
+    ENDIF 
+  NEXT 
+    FMain.Form_Open()
+    SET_TO_DEFAULT_Click()
+    SHELL "oxim-agent -r" WAIT 
+END
+
+
+
+PUBLIC SUB SET_TO_DEFAULT_Click()
+
+DIM download_list_file_path AS String '來源檔路徑
+DIM download_list_file_string AS String
+DIM download_list_file_array AS Array
+
+DIM temps AS Array
+
+DIM i, j AS Integer
+ME.Center
+
+j = 0
+INSTALL_PATH.Text = "" '設成消失
+DOWNLOAD_MONITOR.Columns.Count = 3
+DOWNLOAD_MONITOR.Columns[0].Text = ("Select a site to download")
+DOWNLOAD_MONITOR.Columns[0].Width = 150
+ 
+'2008-11-19增加判斷 EXTERNAL_DOWNLOAD_URL 環境變數，若該值不為空值，則預設帶入後點擊
+'Message(GLOBALS.SYS_EXTERNAL_DOWNLOAD_URL)
+IF GLOBALS.SYS_EXTERNAL_DOWNLOAD_URL <> "" THEN 
+    DOWNLOAD_MONITOR.Rows.Count = 1
+    DOWNLOAD_MONITOR[0, 0].Text = "EXTERNAL_DOWNLOAD_URL"
+    DOWNLOAD_MONITOR[0, 1].Text = GLOBALS.SYS_EXTERNAL_DOWNLOAD_URL
+    DOWNLOAD_MONITOR.Rows[0].Selected = TRUE
+    
+    DOWNLOAD_MONITOR.Visible = TRUE
+    DOWNLOAD_LIST.Visible = FALSE
+    DOWNLOAD_LIST.Clear()
+    TabStrip1.Enabled = TRUE
+    DOWNLOAD_MONITOR.Rows.Unselect
+    BUTTOM_CONNECT_Click
+ELSE 
+'讀出下載站台 (於 /root/.oxim/mirrors.site)  
+  download_list_file_path = "~/.oxim/mirrors.site"
+'讀mirrors.site
+'讀出來的資料，就給他變成array
+ SHELL "cat " & download_list_file_path TO download_list_file_string
+ download_list_file_array = Split(download_list_file_string, Chr(10))
+ '一個簡單的迴圈，把等號二邊分成array
+
+ '過濾空白列
+ FOR i = 0 TO download_list_file_array.Length - 1
+    IF Trim(download_list_file_array[i]) <> "" THEN         
+        DOWNLOAD_MONITOR.Rows.Count = j + 1
+            temps = Split(download_list_file_array[i], "=")
+        DOWNLOAD_MONITOR[j, 0].Text = Replace(Trim(temps[0]), "\"", "")       
+        DOWNLOAD_MONITOR[j, 1].Text = Replace(Trim(temps[1]), "\"", "")   
+        'DOWNLOAD_MONITOR[j, 1].ForeColor = &H00FFFFFF&
+        j = j + 1
+    ENDIF 
+ NEXT 
+ '網址藏起來吧~
+ DOWNLOAD_MONITOR.Columns[1].Width = 0
+ DOWNLOAD_MONITOR.Visible = TRUE
+ DOWNLOAD_LIST.Visible = FALSE
+ DOWNLOAD_LIST.Clear()
+ TabStrip1.Enabled = TRUE
+ DOWNLOAD_MONITOR.Rows.Unselect
+ENDIF 
+END
+
+
+
+
+
+PUBLIC SUB BUTTOM_CONNECT_Click()
+    DIM cin_string AS String
+    DIM cin_array AS Array
+    DIM cin_tmp_array AS Array
+    DIM fulldata_array AS Array
+    DIM i, j, k, m, n AS Integer
+    DIM check AS Boolean
+    BUTTOM_CONNECT.Enabled = FALSE
+    TabStrip1.Enabled = FALSE
+    '先刪除
+    SHELL "rm -fr /tmp/cin.list" 
+    'SHELL "wget " & DOWNLOAD_MONITOR[DOWNLOAD_MONITOR.row, 1].Text & "/cin.list -O /tmp/cin.list" WAIT 
+    DownloaderModules.Download(DOWNLOAD_MONITOR[DOWNLOAD_MONITOR.row, 1].Text & "/cin.list", "/tmp/cin.list")  
+    
+
+  
+    '檢查檔案是否存在 ...
+    SHELL "cat /tmp/cin.list" TO cin_string
+    IF Trim(cin_string) = "" THEN 
+        Message("此站台無法連線....請嘗試別的站台...!")        
+        TabStrip1.Enabled = TRUE
+        '2008_11_19增加，如果EXTERNAL_DOWNLOAD_URL環境變數不是空值，失敗直接中離
+        IF GLOBALS.SYS_EXTERNAL_DOWNLOAD_URL <> "" THEN 
+            BUTTON_NO_Click
+            FormInstallOxim.Close
+        ENDIF 
+    ELSE 
+        TabStrip1.Enabled = TRUE
+    'ColumnView1.Columns.Count = 2
+    'ColumnView1.Columns[0].text = "樹"
+    'ColumnView1.Columns[1].text = "說明"    
+    'ColumnView1.Add(0, "test", NULL)
+    'ColumnView1.Add(1, "testc", NULL, "0")
+    'ColumnView1[1][1] = "test"    
+        DOWNLOAD_MONITOR.Visible = FALSE        
+        DOWNLOAD_LIST.Clear()
+        DOWNLOAD_LIST.Visible = TRUE
+        DOWNLOAD_LIST.Columns.Count = 3
+        DOWNLOAD_LIST.Columns[0].Text = ("Language&Input Method Name")
+        DOWNLOAD_LIST.Columns[1].Text = ("Description")
+        DOWNLOAD_LIST.Columns[2].Text = ""
+        DOWNLOAD_LIST.Columns[2].Width = 3 '網址藏起來吧~
+        cin_array = Split(cin_string, Chr(10))
+        j = 0
+        k = 0
+        FOR i = 0 TO cin_array.Length - 1
+            IF Split(cin_array[i], "=").Length > 1 THEN 
+                IF Trim(Split(cin_array[i], "=")[0]) = "Language" THEN '發現根 
+                    '此處也要修改，若沒發現 "," 代表舊的，就直接 show ，如果有發現，就只好判斷語系了(zh)
+                    IF Split(Replace(Trim(Split(cin_array[i], "=")[1]), "\"", ""), ",").Length = 1 THEN 
+                        DOWNLOAD_LIST.Add(j + 10000, Replace(Trim(Split(cin_array[i], "=")[1]), "\"", ""), NULL)
+                    ELSE 
+                        IF GLOBALS.SYS_ZH_START = TRUE THEN 
+                            DOWNLOAD_LIST.Add(j + 10000, Trim(Split(Replace(Trim(Split(cin_array[i], "=")[1]), "\"", ""), ",")[0]), NULL)
+                        ELSE 
+                            DOWNLOAD_LIST.Add(j + 10000, Trim(Split(Replace(Trim(Split(cin_array[i], "=")[1]), "\"", ""), ",")[1]), NULL)
+                        ENDIF 
+                    ENDIF 
+                    j = j + 1
+                ENDIF
+            ELSE           
+                '這都是輸入法
+                  cin_tmp_array = Split(cin_array[i], ",")
+                  IF cin_tmp_array.Length = 3 OR cin_tmp_array.Length = 5 THEN '12日擴增至5欄...
+                    '再與fulldatata檢查
+                    fulldata_array = FMain.getfullnames()
+                    '如果是中文的zh_TW，取前1欄，如果是其他的，取3
+                    'IF GLOBALS.SYS_ZH_START = TRUE THEN 
+                        DOWNLOAD_LIST.Add(k, Replace(Trim(cin_tmp_array[1]), "\"", ""), NULL, Str(j + 10000 - 1))
+                    'ELSE 
+                    '    DOWNLOAD_LIST.Add(k, Replace(Trim(cin_tmp_array[3]), "\"", ""), NULL, Str(j + 10000 - 1))
+                    'ENDIF 
+                    DOWNLOAD_LIST[k].picture = picture["img/checkbox_false.png"]                      
+                    FOR m = 0 TO fulldata_array.Length - 1
+                                     'Message(fulldata_array[m])
+                            'Message(cin_tmp_array[0])
+                            'BREAK                
+                        IF Trim(fulldata_array[m]) = Split(Trim(cin_tmp_array[0]), ".")[0] THEN 
+                            DOWNLOAD_LIST[k].Picture = picture["img/checkbox_x.png"]                      
+                            'DOWNLOAD_LIST[j * 1000 + k].Picture = picture["img/checkbox_true.png"]                      
+                        ENDIF 
+                    NEXT 
+                    '如果是中文的zh_TW，取前2欄，如果是其他的，取4
+                    IF GLOBALS.SYS_ZH_START = TRUE THEN 
+                        IF Split(Replace(Trim(cin_tmp_array[2]), "\"", ""), ";").Length = 2 THEN 
+                            DOWNLOAD_LIST[k][1] = Trim(Split(Replace(Trim(cin_tmp_array[2]), "\"", ""), ";")[0])
+                        ELSE 
+                            DOWNLOAD_LIST[k][1] = Replace(Trim(cin_tmp_array[2]), "\"", "")
+                        ENDIF 
+                    ELSE
+                        IF Split(Replace(Trim(cin_tmp_array[2]), "\"", ""), ";").Length = 2 THEN  
+                            DOWNLOAD_LIST[k][1] = Trim(Split(Replace(Trim(cin_tmp_array[2]), "\"", ""), ";")[1])
+                        ELSE
+                            DOWNLOAD_LIST[k][1] = Replace(Trim(cin_tmp_array[2]), "\"", "")
+                        ENDIF 
+                    ENDIF 
+                    DOWNLOAD_LIST[k][2] = DOWNLOAD_MONITOR[DOWNLOAD_MONITOR.row, 1].Text & "/" & Replace(Trim(cin_tmp_array[0]), "\"", "")
+                    
+                    k = k + 1                    
+                  ENDIF 
+            ENDIF 
+        NEXT 
+        
+        DOWNLOAD_LIST.Enabled = TRUE
+        
+    ENDIF 
+    SHELL "rm -fr /tmp/cin.list" '用完就刪掉 
+END
+
+PUBLIC SUB DOWNLOAD_MONITOR_Select()
+  BUTTOM_CONNECT.Enabled = TRUE
+  DOWNLOAD_MONITOR.Rows.Select(DOWNLOAD_MONITOR.Row, 1)
+
+END
+
+PUBLIC SUB DOWNLOAD_LIST_Click()
+    '只好再加上，已經裝過的，不能移除，也不能再勾
+    DIM i AS Integer
+    SELECT_TABLE.Columns.Count = 1
+    
+    IF DOWNLOAD_LIST[DOWNLOAD_LIST.Key].Picture <> NULL THEN 
+        IF DOWNLOAD_LIST[DOWNLOAD_LIST.Key].Picture = picture["img/checkbox_false.png"] THEN 
+            DOWNLOAD_LIST[DOWNLOAD_LIST.Key].Picture = picture["img/checkbox_true.png"]
+
+            SELECT_TABLE.Rows.Count = SELECT_TABLE.Rows.Count + 1
+            SELECT_TABLE[SELECT_TABLE.Rows.Count - 1, 0].Text = DOWNLOAD_LIST[DOWNLOAD_LIST.Key][2]
+        ELSE IF DOWNLOAD_LIST[DOWNLOAD_LIST.Key].Picture = picture["img/checkbox_true.png"] THEN 
+            DOWNLOAD_LIST[DOWNLOAD_LIST.Key].Picture = picture["img/checkbox_false.png"]
+            FOR i = SELECT_TABLE.Rows.Count - 1 TO 0 STEP -1
+                'message(SELECT_TABLE[i, 0].Text)
+                'message(Split(DOWNLOAD_LIST[DOWNLOAD_LIST.Key][2], "/")[Split(DOWNLOAD_LIST[DOWNLOAD_LIST.Key][2], "/").length - 1])
+                IF SELECT_TABLE[i, 0].Text = DOWNLOAD_LIST[DOWNLOAD_LIST.Key][2] THEN
+                    SELECT_TABLE.Rows.Remove(i, 1) 
+                    SELECT_TABLE.Refresh
+                ENDIF 
+            NEXT 
+        ENDIF 
+    ENDIF 
+        
+
+END
+
+
+
+
+
+
+
+
+
+
+PUBLIC SUB TabStrip1_MouseDown()
+
+  
+        '檢查站台列表是否需要更新
+    DIM hfile_string AS String
+    DIM today AS String
+    
+    IF TabStrip1.Index = 1 THEN 
+        today = Format(Date, "yyyymmdd")
+        SHELL "ls -lc --time-style=long-iso ~/.oxim/mirrors.site|awk '{print $6}' " TO hfile_string
+        hfile_string = Trim(Replace(hfile_string, "-", ""))
+        IF Len(hfile_string) <> 8 THEN 
+            '檔案必需下載
+            'SHELL "wget http://opendesktop.org.tw/mirrors.site -O ~/.oxim/mirrors.site" WAIT                 
+            DownloaderModules.Download("http://opendesktop.org.tw/mirrors.site", "~/.oxim/mirrors.site")
+        ELSE 
+            '檔案存在，比對檔案日期
+            'message(Format(Date, "yyyymmdd"))
+            
+            IF Val(today) - Val(hfile_string) >= 1 THEN 
+                '日期需要更新了
+                SHELL "rm -fr ~/.oxim/mirrors.site" WAIT         
+                'SHELL "touch -f " & "~/.oxim/mirrors.site" WAIT 
+                'SHELL "wget http://opendesktop.org.tw/mirrors.site -O ~/.oxim/mirrors.site" WAIT         
+                DownloaderModules.Download("http://opendesktop.org.tw/mirrors.site", "~/.oxim/mirrors.site")
+            ENDIF 
+       ENDIF   
+    ENDIF 
+    FormInstallOxim.LOADTODEFAULT()
+    
+
+END
+
+PUBLIC SUB TabStrip1_Click()
+
+  TabStrip1_MouseDown()
+
+END

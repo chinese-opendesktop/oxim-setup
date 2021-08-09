@@ -1,0 +1,39 @@
+body
+{
+    overflow: hidden;
+    cursor: default;
+    font-size: 20pt;
+}
+
+table
+{
+    width: 100%;
+}
+
+table thead {
+  background: #aaa url(../images/bg-table-thead.png) repeat-x top left;
+  font-size: .9em;
+}
+
+table thead tr th {
+  border: 1px solid #888;
+  font-weight: normal;
+  padding: .3em 1.67em .1em 1.67em;
+  text-align: left;
+}
+
+.im_selected 
+{
+    color: white;
+    background-color: black;
+}
+
+.comment
+{
+    color: blue;
+}
+
+#dlgChewing
+{
+	width: 70%;
+}

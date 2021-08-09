@@ -1,0 +1,91 @@
+# Gambas Form File 2.0
+
+{ Form Form
+  MoveScaled(0,0,55,46)
+  Text = ("The Chewing Input Method Property")
+  Border = Window.Fixed
+  { Frame3 Frame
+    MoveScaled(24,17,30,8)
+    Text = ("CapsLock Output")
+    { CapsLock_0 RadioButton
+      MoveScaled(1,3,9,3)
+      Text = ("Lower")
+    }
+    { CapsLock_1 RadioButton
+      MoveScaled(13,3,8,3)
+      Text = ("Upper")
+    }
+  }
+  { Frame2 Frame
+    MoveScaled(24,1,30,15)
+    Text = ("SelectionKeys")
+    { SelectionKey_3 RadioButton
+      MoveScaled(2,11,19,3)
+      Text = ("zxcvbnm,./ KeSel")
+    }
+    { SelectionKey_0 RadioButton
+      MoveScaled(2,2,19,3)
+      Text = ("1234567890 KeSel")
+    }
+    { SelectionKey_1 RadioButton
+      MoveScaled(2,5,19,3)
+      Text = ("qwertyuiop KeSel")
+    }
+    { SelectionKey_2 RadioButton
+      MoveScaled(2,8,19,3)
+      Text = ("asdfghjkl; KeSel")
+    }
+  }
+  { Frame1 Frame
+    MoveScaled(1,1,22,38)
+    Text = ("Keybord's keymapping")
+    { RadioButton10 RadioButton
+      MoveScaled(27,4,19,3)
+      Text = ("RadioButton1")
+    }
+    { KeySet_8 RadioButton
+      MoveScaled(1,34,19,3)
+      Text = ("Pingin")
+    }
+    { KeySet_0 RadioButton
+      MoveScaled(1,2,19,3)
+      Text = ("Standard")
+    }
+    { KeySet_1 RadioButton
+      MoveScaled(1,6,19,3)
+      Text = ("Shius'")
+    }
+    { KeySet_2 RadioButton
+      MoveScaled(1,10,19,3)
+      Text = ("IBM")
+    }
+    { KeySet_3 RadioButton
+      MoveScaled(1,14,19,3)
+      Text = ("Ginya")
+    }
+    { KeySet_4 RadioButton
+      MoveScaled(1,18,19,3)
+      Text = ("Eten")
+    }
+    { KeySet_5 RadioButton
+      MoveScaled(1,22,19,3)
+      Text = ("Eten 26 key")
+    }
+    { KeySet_6 RadioButton
+      MoveScaled(1,26,19,3)
+      Text = ("DVORAK")
+    }
+    { KeySet_7 RadioButton
+      MoveScaled(1,30,19,3)
+      Text = ("DVORAK Shius'")
+    }
+  }
+  { Button1 Button
+    MoveScaled(33,41,9,3)
+    Text = ("_OK")
+  }
+  { Button2 Button
+    MoveScaled(44,41,9,3)
+    Text = ("_Cancel")
+  }
+}

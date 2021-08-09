@@ -1,0 +1,98 @@
+#!/bin/bash
+export TEXTDOMAIN="oxim-setup"
+source gettext.sh
+
+export EXTERNAL_DOWNLOAD_URL=""
+
+
+#oxim-setup-php
+function run_php(){
+	#if which php && php -v|grep "cli" && php -r 'if (!extension_loaded("php-gtk")) echo (!dl("php_gtk2.so"));' ; then
+	if which php 2>/dev/null && php -v|grep "cli" ; then
+		#echo `php -v|grep -o 'PHP \([0-9].[0-9].[0-9]\) *'|grep -o '\([0-9].[0-9].[0-9]\)'`
+		/usr/lib/oxim-setup/oxim-setup-php/oxim-setup 2>/dev/null && exit
+	fi
+}
+
+# oxim-setup-qt3
+function run_qt3(){
+	if test -x /sbin/ldconfig && /sbin/ldconfig -p|grep libqt-mt ; then
+		/usr/lib/oxim-setup/oxim-setup-qt3/oxim-setup && exit
+	fi
+}
+
+# oxim-setup-gtk
+function run_gtk(){ 
+	if test -x /sbin/ldconfig && /sbin/ldconfig -p|grep gtk-x11-2.0 ; then
+		/usr/lib/oxim-setup/oxim-setup-gtk/oxim-setup >/dev/null 2>&1 && exit
+	fi
+}
+
+# oxim-setup-gambas
+function run_gambas(){
+	if which gbr2 && which gbx2 ; then
+		/usr/lib/oxim-setup/oxim-setup-gambas/oxim-setup && exit
+	fi
+}
+
+#oxim-setup-pygtk
+function run_pygtk(){
+	if which python 2>/dev/null ; then
+		cd /usr/lib/oxim-setup/oxim-setup-pygtk && ./oxim-setup && exit
+	fi
+}
+
+#oxim-setup-oxzilla
+#function run_oxzilla(){
+#	if which oxzilla 2>/dev/null && which oxim-setup-oxzilla 2>/dev/null ; then
+#		oxim-setup-oxzilla && exit
+#	fi
+#}
+
+# oxim-setup-qt4
+function run_qt4(){
+	if test -x /sbin/ldconfig && /sbin/ldconfig -p|grep libqt-mt ; then
+		/usr/lib/oxim-setup/oxim-setup-qt4/oxim-setup && exit
+	fi
+}
+# oxim-setup-java
+function run_java(){
+	if which java ; then
+		cd /usr/lib/oxim-setup/oxim-setup-java
+		java -jar oxim-setup.jar && exit
+	fi
+}
+# oxim-setup-oxzilla
+function run_oxzilla(){
+	if test -x /usr/lib/oxzilla/ ; then
+		cd /usr/lib/oxim-setup/oxim-setup-oxzilla
+		oxzilla index.html && exit
+	fi
+}
+
+function runall(){
+	run_qt3
+	run_php
+	run_gambas
+	run_gtk
+	run_pygtk
+	run_qt4
+	run_java
+	run_oxzilla
+}
+
+
+if test $# -lt 1 ; then
+	runall
+	exit
+else
+	if test $1 = "gambas" || test $1 = "php" || test $1 = "gtk" || test $1 = "qt3" || test $1 = "qt4" || test $1 = "pygtk"|| test $1 = "java" || test $1 = "oxzilla" ; then
+		run_"$1"
+	else
+		echo `eval_gettext "OXIM setup tool version"`" 1.5.5."
+		echo `eval_gettext "(use \"-h\" option for help)"`
+		echo
+		echo
+		echo `eval_gettext "usage:"`"$0 [-h] [gambas|php|gtk|qt3|pygtk|qt4|java|oxzilla]"
+	fi
+fi

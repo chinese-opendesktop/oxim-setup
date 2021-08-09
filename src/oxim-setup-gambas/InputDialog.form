@@ -1,0 +1,30 @@
+# Gambas Form File 2.0
+
+{ Form Form
+  MoveScaled(0,0,39,12)
+  Text = ("Edit")
+  Border = Window.Fixed
+  Stacking = Window.Above
+  Sticky = True
+  { Button1 Button
+    MoveScaled(16,8,8.8889,3)
+    Text = ("_OK")
+  }
+  { Button2 Button
+    MoveScaled(29,8,8.8889,3)
+    Text = ("_Cancel")
+  }
+  { Label1 Label
+    MoveScaled(1,1,24,3)
+    Text = ("New Contents, please...")
+  }
+  { TextBox1 TextBox
+    MoveScaled(4,4,30,3)
+    Text = ("")
+  }
+  { TextBox2 TextBox
+    MoveScaled(2,8,12,3)
+    Visible = False
+    Text = ("TextBox2")
+  }
+}

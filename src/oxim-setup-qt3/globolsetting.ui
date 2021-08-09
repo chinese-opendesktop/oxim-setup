@@ -1,0 +1,176 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>GlobolSetting</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>GlobolSetting</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>334</width>
+            <height>175</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>X Input Method Global Settings</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>Alias:</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="3" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>GlobolOKButton</cstring>
+            </property>
+            <property name="text">
+                <string>OK</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="3" column="3">
+            <property name="name">
+                <cstring>GlobolCancelButton</cstring>
+            </property>
+            <property name="text">
+                <string>Cancel</string>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="2" column="2" rowspan="1" colspan="2">
+            <item>
+                <property name="text">
+                    <string>1</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>2</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>3</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>4</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>5</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>6</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>7</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>8</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>9</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>0</string>
+                </property>
+            </item>
+            <property name="name">
+                <cstring>HotKey</cstring>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>HotKeyBox</cstring>
+            </property>
+            <property name="text">
+                <string>HotKey Ctrl + Alt +</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>IMNameLabel</cstring>
+            </property>
+            <property name="font">
+                <font>
+                    <bold>1</bold>
+                </font>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>IM:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>AliasNameEdit</cstring>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>GlobolOKButton</sender>
+        <signal>clicked()</signal>
+        <receiver>GlobolSetting</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>GlobolCancelButton</sender>
+        <signal>clicked()</signal>
+        <receiver>GlobolSetting</receiver>
+        <slot>reject()</slot>
+    </connection>
+    <connection>
+        <sender>HotKeyBox</sender>
+        <signal>stateChanged(int)</signal>
+        <receiver>GlobolSetting</receiver>
+        <slot>HotKeyBox_stateChanged(int)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>HotKeyBox</tabstop>
+    <tabstop>HotKey</tabstop>
+    <tabstop>AliasNameEdit</tabstop>
+    <tabstop>GlobolOKButton</tabstop>
+    <tabstop>GlobolCancelButton</tabstop>
+</tabstops>
+<includes>
+    <include location="local" impldecl="in declaration">qlineedit.h</include>
+    <include location="local" impldecl="in declaration">qcheckbox.h</include>
+    <include location="local" impldecl="in declaration">qmessagebox.h</include>
+    <include location="local" impldecl="in declaration">common.h</include>
+    <include location="local" impldecl="in implementation">globolsetting.ui.h</include>
+</includes>
+<slots>
+    <slot>HotKeyBox_stateChanged( int state )</slot>
+</slots>
+<functions>
+    <function>init()</function>
+</functions>
+<pixmapinproject/>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=OXIM Setup
+Comment=OXIM Setup Tool
+Exec=oxim-setup
+Icon=oxim-setup.png
+Terminal=false
+StartupNotify=true
+Categories=Application;Settings;X-GNOME-SystemSettings;
+Type=Application
+Name[zh_CN]=OXIM 输入法框架
+Name[zh_TW]=OXIM 輸入框架
+Name[zh_HK]=OXIM 輸入框架

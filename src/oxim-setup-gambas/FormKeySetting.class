@@ -1,0 +1,59 @@
+' Gambas class file
+
+PUBLIC global_check_keys AS String
+
+PUBLIC SUB Form_Open()
+  DIM i AS Integer
+  ME.Center
+  KEY_SELECT.Add("", 0)
+  FOR i = 0 TO 9
+    KEY_SELECT.Add(Str(i), (i + 1))
+  NEXT 
+
+
+END
+
+PUBLIC SUB Button2_Click()
+
+  FormKeySetting.Visible = FALSE
+
+END
+
+PUBLIC SUB sets(method_english_inputs AS String, method_chinese_inputs AS String, key_inputs AS String, alias_name_inputs AS String)
+
+  method_english.text = method_english_inputs
+  METHOD_INPUT.text = method_chinese_inputs  
+  ALIAS_NAME.text = alias_name_inputs  
+  IF Trim(key_inputs) <> "" THEN 
+    USE_KEY_CHECKBOX.Value = TRUE
+    KEY_SELECT.Enabled = TRUE
+    KEY_SELECT.text = key_inputs
+  ELSE 
+    USE_KEY_CHECKBOX.Value = FALSE
+    KEY_SELECT.Enabled = FALSE
+    KEY_SELECT.Text = ""
+  ENDIF 
+END
+
+
+PUBLIC SUB Button1_Click()
+
+    IF USE_KEY_CHECKBOX.Value = 0 THEN 
+        KEY_SELECT.Text = ""
+    ENDIF 
+  FMain.SETTING_KEY_ALIAS(method_english.Text, ALIAS_NAME.Text, KEY_SELECT.Text)
+  FormKeySetting.Visible = FALSE
+END
+
+
+
+
+PUBLIC SUB USE_KEY_CHECKBOX_Click()
+
+  IF USE_KEY_CHECKBOX.Value = TRUE THEN 
+    KEY_SELECT.Enabled = TRUE
+  ELSE 
+    KEY_SELECT.Enabled = FALSE
+  ENDIF 
+
+END

@@ -1,0 +1,60 @@
+# Gambas Form File 2.0
+
+{ Form Form
+  MoveScaled(0,0,66,52)
+  Expand = True
+  Text = ("Install Input Method")
+  Border = Window.Fixed
+  { BUTTON_YES Button
+    MoveScaled(55,2,10,4)
+    Text = ("_OK")
+  }
+  { BUTTON_NO Button
+    MoveScaled(55,7,10,4)
+    Text = ("_Cancel")
+  }
+  { TabStrip1 TabStrip
+    MoveScaled(2,1,52,50)
+    Count = 2
+    Index = 0
+    Text = ("Instal_L from local")
+    { TextLabel1 TextLabel
+      MoveScaled(1,1,40,7)
+      Text = ("Input full file name include file path, or press \"browse\" button to choose file;")
+    }
+    { Button1 Button
+      MoveScaled(36,14,10,4)
+      Text = ("Browse")
+    }
+    { INSTALL_PATH TextBox
+      MoveScaled(1,10,38,3)
+      Text = ("")
+    }
+    Index = 1
+    Text = ("Install from _Network")
+    { DOWNLOAD_MONITOR TableView
+      MoveScaled(1,1,49,38)
+      Mode = Select.Single
+      Header = GridView.Horizontal
+    }
+    { BUTTOM_CONNECT Button
+      MoveScaled(39,41,11,4)
+      Enabled = False
+      Text = ("Connect")
+      Picture = Picture["icon:/small/refresh"]
+      Default = True
+    }
+    { DOWNLOAD_LIST ColumnView
+      MoveScaled(1,1,49,38)
+    }
+    Index = 0
+  }
+  { SET_TO_DEFAULT Button
+    MoveScaled(55,12,10,4)
+    Visible = False
+    Text = ("Default")
+  }
+  { SELECT_TABLE TableView
+    MoveScaled(69,3,54,27)
+  }
+}

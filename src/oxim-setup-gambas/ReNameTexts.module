@@ -1,0 +1,29 @@
+' Gambas module file
+
+PUBLIC SUB rename_FMain()   
+  DIM settodefault_text AS String
+  DIM settodefault_space AS String
+  settodefault_space = "  "
+  FMain.settodefault.Text = settodefault_space & ("Default")
+  
+  FMain.Button1.Text = Replace(FMain.Button1.Text, "_", "&")
+  FMain.Button2.Text = Replace(FMain.Button2.Text, "_", "&")
+  FMain.BUTTOM_ATTRIB.text = Replace(FMain.BUTTOM_ATTRIB.text, "_", "&")
+  FMain.TabStrip1[0].Text = Replace(FMain.TabStrip1[0].Text, "_", "&")
+  FMain.TabStrip1[1].Text = Replace(FMain.TabStrip1[1].Text, "_", "&")
+  FMain.TabStrip1[2].Text = Replace(FMain.TabStrip1[2].Text, "_", "&")
+  FMain.TabStrip1[3].Text = Replace(FMain.TabStrip1[3].Text, "_", "&")
+  FMain.Frame1.text = Replace(FMain.Frame1.Text, "_", Chr(38))
+  'FMain.settodefault.Text = Replace(FMain.settodefault.Text, "_", Chr(38))
+  FormAttrib.Button1.Text = Replace(FormAttrib.Button1.Text, "_", "&")
+  FormAttrib.Button2.Text = Replace(FormAttrib.Button2.Text, "_", "&")
+  FormAttrib.Button3.Text = Replace(FormAttrib.Button3.Text, "_", "&")
+  FormAttribChewing.Button1.Text = Replace(FormAttribChewing.Button1.Text, "_", "&")
+  FormAttribChewing.Button2.Text = Replace(FormAttribChewing.Button2.Text, "_", "&")
+  FormInstallOxim.TabStrip1[0].text = Replace(FormInstallOxim.TabStrip1[0].text, "_", "&")
+  FormInstallOxim.TabStrip1[1].text = Replace(FormInstallOxim.TabStrip1[1].text, "_", "&")
+  FormInstallOxim.BUTTON_YES.text = Replace(FormInstallOxim.BUTTON_YES.text, "_", "&")
+  FormInstallOxim.BUTTON_NO.text = Replace(FormInstallOxim.BUTTON_NO.text, "_", "&")
+  InputDialog.Button1.Text = Replace(InputDialog.Button1.Text, "_", "&")
+  InputDialog.Button2.Text = Replace(InputDialog.Button2.Text, "_", "&")
+END

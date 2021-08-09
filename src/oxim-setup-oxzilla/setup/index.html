@@ -1,0 +1,300 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-tw" lang="zh-tw">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-language" content="zh-tw" />
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link type="text/css" href="/usr/lib/oxzilla/js/css/smoothness/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="/usr/lib/oxzilla/js/css/jquery.treeTable.css" rel="stylesheet" />
+<script>
+var pharse;
+var fontlist;
+var imlist;
+var globalsettings;
+var installim;
+var sunpinyin, chewing, gencin;
+var configs;
+
+loadmodule("oxim_setup");
+system_include("jquery-1.4.1");
+include("configs.var.js");
+include(configs.baseurl+"/class/dialogs.class.js");
+include(configs.baseurl+"/class/pharse.class.js");
+include(configs.baseurl+"/class/fontlist.class.js");
+include(configs.baseurl+"/class/globalsettings.class.js");
+include(configs.baseurl+"/class/imlist.class.js");
+include(configs.baseurl+"/class/sunpinyin.class.js");
+include(configs.baseurl+"/class/chewing.class.js");
+include(configs.baseurl+"/class/gencin.class.js");
+include(configs.baseurl+"/class/installim.class.js");
+</script>
+<script type="text/javascript" src="/usr/lib/oxzilla/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="/usr/lib/oxzilla/js/jquery.treeTable.js"></script>
+
+<script>
+    $(document).ready(function () 
+    {
+	new Dialogs();	// init dialogs
+	pharse = new Pharse();
+	fontlist = new FontList("#selFontList", "#areaFontSizes");
+	imlist = new IMList();
+	globalsettings = new GlobalSettings();
+	sunpinyin = new Sunpinyin();
+	chewing = new Chewing();
+	gencin = new GenCin();
+	installim = new InstallIM();
+	var tags = configs.tags;
+
+	$(tags.tabMain).tabs({
+	    show: function(event, ui){
+		if( /*0==ui.index || */2==ui.index)	// change to PharseList tab
+		{
+		    $(ui.panel).find("div").height(window.innerHeight-300);
+		}
+	    }
+	});
+	$(tags.dlgInstallTab).tabs({
+	    idPrefix: "ins",
+	    select: function(event, ui){
+		if( 1 == ui.index )
+		{
+		    installim.showMirrorSites('#treeNetwork', '#btnConnect');
+		    $("#treeNetwork").treeTable({
+			expandable: false
+		    });
+		    $("#treeNetwork").treeTable();
+		}
+	    }
+	});
+	$(tags.btnOK).click(function(){ 
+	    oxim_make_config();
+	    fontlist.save();
+	    pharse.save("#tblPharse"); 
+	    sunpinyin.save();
+	    chewing.save();
+	    gencin.save();
+	    oxim_reload(); 
+	    window.close(); 
+	});
+	$(tags.btnCancel).click(function(){
+	    window.close();
+	});
+	$(tags.btnDefault).click(function(){
+	    imlist.setIMDefault( "#node-", configs.getNodeId() ) ;
+	    $(this).attr("disabled", "disabled");
+	    })
+	    .attr("disabled", "disabled");
+	$(tags.btnInstallIM).click(function(){
+	    installim.changeTabLabel(0);
+	    $(tags.btnConnect).attr('disabled', 'disabled');
+	    $(tags.dlgInstallTab).tabs('select', 0);
+	    $(tags.dlgInstall).dialog("open");
+	});
+	$(tags.btnRemoveIM).click(function(){ 
+	    if ( imlist.deleteIM_precheck( configs.getNodeId() ) )
+		$(tags.dlgDeleteIMConfirm).dialog('open');
+	    })
+	    .attr("disabled", "disabled");
+	$(tags.btnGlobal).click(function(){
+	    if ( globalsettings.setData( configs.getNodeId() ) )
+		$(tags.dlgGlobal).dialog("open");
+	    })
+	    .attr("disabled", "disabled");
+	$(tags.btnProperty).click(function(){
+	    var im = imlist.get( configs.getNodeId() );
+
+	    if ( im.modname.match(/Sunpinyin/i) && 
+		sunpinyin.setData( configs.getNodeId() ) )
+	    {
+		$(tags.dlgSunpinyin).dialog("open");
+	    }
+	    if ( im.modname.match(/chewing/i) && 
+		chewing.setData( configs.getNodeId() ) )
+	    {
+		$(tags.dlgChewing).dialog("open");
+	    }
+	    if ( (im.modname.match(/gen-inp/i) ||
+		    im.modname.match(/gen-inp-v1/i) ) &&
+		gencin.setData( configs.getNodeId() ) )
+	    {
+		$(tags.dlgGen).dialog("open");
+	    }
+	    })
+	    .attr("disabled", "disabled");
+	$(tags.btnConnect).click(function(){
+	   installim.connect( "#treeNetwork", '#'+this.id, $("body").data("current_site") );
+	});
+	$(tags.frmUploadFile).click(function(){
+	   $(this).parent().find("input[type=text]").attr("value", file_selector());
+	});
+
+	// IM Lists
+	imlist.setDefault("#node-", "#tree");
+	$("#tree").treeTable();
+
+	// Font Lists
+	fontlist.setDefault();
+
+	// Pharse Lists
+	pharse.setDefault("#rowPharseList", "#tblPharse");
+
+
+	window_resize_to(0, 0, window.screen.availWidth, window.screen.availHeight);
+	//$(tags.tabMain).tabs('select', 0);
+    });
+</script>
+</head>
+<body>
+
+<!-- //-->
+<table style="display: none">
+    <tr id="node-">
+	<td><input type="checkbox"></td>
+	<td></td>
+	<td></td>
+	<td></td>
+    </tr>
+</table>
+
+<table style="display: none">
+    <tr id="rowPharseList">
+	<td>
+	    <span id=""></span>
+	</td>
+	<td>
+	    <input type="text" name="" value="">
+	</td>
+    </tr>
+</table>
+
+<!-- //-->
+<div id="tabs">
+    <ul>
+	<li><a href="#tabs-1">輸入法</a></li>
+	<li><a href="#tabs-2">字型</a></li>
+	<li><a href="#tabs-3">片語</a></li>
+	<li><a href="#tabs-4">關於</a></li>
+    </ul>
+    <div id="tabs-1">
+	<table border=1>
+	    <tr>
+		<td style="height: 10px">
+		<div style="overflow: auto;">
+		    <table id="tree" border=0>
+			<thead>
+			    <tr>
+			    <th>輪換</th>
+			    <th>輸入法</th>
+			    <th>快速鍵</th>
+			    <th>==</th>
+			    </tr>
+			</thead>
+			<tbody>
+			    <!--//-->
+			</tbody>
+		    </table>
+		</div>
+		</td>
+		<td style="vertical-align: bottom">
+		    <button id="btnDefault"><img src="imgs/cd01.png">預設　</button><br />
+		    <button id="btnGlobal">通用設定</button><br />
+		    <button id="btnProperty">屬性　　</button>
+		</td>
+	    </tr>
+	    <tr>
+		<td>
+		    <button id="btnInstallIM"><img src="imgs/edit_add.png">安裝輸入法</button>
+		    <button id="btnRemoveIM"><img src="imgs/edit_remove.png">移除輸入法</button>
+		</td>
+	    </tr>
+	</table>
+    </div>
+
+    <!-- font setting //-->
+    <div id="tabs-2">
+	<table>
+	    <tr>
+		<td>
+		    <label for="selFontList">偏好字型：</label>
+		    <select id="selFontList"></select>
+		</td>
+	    </tr>
+	    <tr>
+		<td>
+		    <fieldset>
+		    <legend>字型大小(Pixels)</legend>
+		    <table border=0 width=100% height=100% style="overflow: auto;">
+			<tr>
+			    <td id="areaFontSizes">
+				組字區：<input id="selPreeditFontSize" type="text" name="" value="" size=2><br />
+				選字區：<input id="selSelectFontSize" type="text" name="" value="" size=2><br />
+				狀態區：<input id="selStatusFontSize" type="text" name="" value="" size=2><br />
+				快速選單：<input id="selMenuFontSize" type="text" name="" value="" size=2><br />
+				符號表：<input id="selSymbolFontSize" type="text" name="" value="" size=2><br />
+				XCIN風格：<input id="selXcinFontSize" type="text" name="" value="" size=2>
+			    </td>
+			    <td>
+				<div style="height:100%; width:100%; overflow: auto;">
+				    <img src="imgs/sample.bmp">
+				</div>
+			    </td>
+			</tr>
+		    </table>
+		    </fieldset>
+		</td>
+	    </tr>
+	</table>
+    </div>
+
+    <!-- pharse list //-->
+    <div id="tabs-3">
+	<table>
+	    <tr>
+		<td>
+		    <div style="overflow-x: hidden; overflow-y: auto; border: 1px solid #69c;">
+		    <table id="tblPharse">
+		    </table>
+		    </div>
+		</td>
+		<td class="comment" width="20%">
+		    您可以在左方的表格內，建立您經常使用的片語、詞句或是符號，往後在輸入的時候，就可以搭配 Alt+Shift 按鍵，達到快速輸入的目的。
+		</td>
+	    </tr>
+	</table>
+    </div>
+
+    <!-- help //-->
+    <div id="tabs-4">
+	<p>Open X Input Method Setup 1.5.5</p>
+	<p>作者：Firefly &lt;firefly@opendesktop.org.tw&gt;</p>
+	<p>網址：http://opendesktop.org.tw</p>
+	<p>授權宣告：</p>
+	<p>
+	    <textarea cols=50 rows=5 readonly>
+Copyright (c) 2009 by  OpenDesktop.org.tw
+
+This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	    </textarea>
+	</p>
+    </div>
+</div>
+<div id="bottom" style="text-align: center;">
+    <input id="btnOK" type="button" value="確定" style="width: 45%; height: 900px">
+    <input id="btnCancel" type="button" value="取消" style="width: 45%">
+</div>
+<!-- //-->
+</body>
+
+</html>
